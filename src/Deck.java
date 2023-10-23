@@ -1,27 +1,17 @@
-/**
- * @author Ohiorenua Ajayi-Isuku
- * @version 1.0
- * @since 2023-10-21
- * A class Deck. Represents the Deck in the Unoflip game.
- *
- * 
- */
 import java.util.*;
 
 public class Deck {
-    private ArrayList<Card> deck = new ArrayList<Card>();
-    private ArrayList<Card> discardedCards = new ArrayList<Card>();
+    private ArrayList<Card> deck;
+    private ArrayList<Card> discardedCards;
 
     /**
      * The number of non_zero cards .
      */
     public static final int NUMBER_OF_REG_CARDS_EACH = 2;
 
-
-
     /**
-     * The number of action cards of each type in
-     * the deck. These include, Skips,Draw 1, Reverses,flip.
+     * The number of "special" cards (aka "action cards") of each suit in
+     * the deck. These include, for instance, Skips,Draw 1 and Reverses,flip.
      */
     public static final int NUMBER_OF_DUP_SPECIAL_CARDS = 2;
 
@@ -36,20 +26,15 @@ public class Deck {
     public static final int NUMBER_OF_WILD_D2_CARDS = 4;
 
 
-    /**
-     * Constructor for deck class.
-     */
     public Deck(){
-         giveDeck();
-         shuffle();
-
+        deck = new ArrayList<Card>();
+        discardedCards = new ArrayList<Card>();
     }
 
-    /**
-     * Method giveDeck Creates a deck of cards.
-     */
 
     public void giveDeck(){
+        deck.clear();
+
         Card.CardType[] cards = {Card.CardType.SKIP, Card.CardType.REVERSE, Card.CardType.DRAW_ONE, Card.CardType.FLIP,};
         Card.Colour[] colors = {Card.Colour.BLUE, Card.Colour.GREEN, Card.Colour.RED, Card.Colour.YELLOW};
         Card.Number[] num = {Card.Number.ONE, Card.Number.TWO, Card.Number.THREE, Card.Number.FOUR,Card.Number.FIVE,Card.Number.SIX,Card.Number.SEVEN,Card.Number.EIGHT, Card.Number.NINE};
@@ -61,7 +46,6 @@ public class Deck {
                 }
             }
         }
-
 
         for (int j = 0; j < NUMBER_OF_DUP_SPECIAL_CARDS; j++) {
             for (Card.CardType card : cards) {
@@ -77,43 +61,44 @@ public class Deck {
             deck.add(new Card(Card.Colour.NONE,Card.CardType.WILD_DRAW_TWO ));
         }
     }
-
-    /**
-     * Method shuffle shuffles the deck of cards.
-     */
     public void shuffle(){
 
         Collections.shuffle(deck);
     }
 
-    /**
-     * Method isEmpty checks if a deck of card is empty.
-     * @return boolen
-     */
+    public ArrayList<Card> getDeck(){
+        return deck;
+    }
+    public ArrayList<Card> getDiscardedCards(){
+        return discardedCards;
+    }
     public boolean isEmpty() {
         return deck.isEmpty();
     }
 
-
     /**
-     * Method draw draws a card from the deck
-     * @return Card
+     * Returns the top card of the Deck, and removes it.
      */
+    //throws Exception maybe
     public Card draw()  {
         if (deck.isEmpty()) {
             System.out.println("The deck is empty");
+            return(null);
+        } else {
+            return deck.remove(0);
         }
-        return deck.remove(0);
     }
     /**
-     * Method discard add all cards played to discard pile.
+     * Discard the Card object passed so that it is out of play until a
+     * remix operation.
      */
     public void discard(Card c) {
         discardedCards.add(c);
     }
 
     /**
-     * Method reAdd adds all the cards from discard pile and reshuffles to give deck.
+     * re shuffle all the cards into the deck by adding all previously discarded cards back into
+     * the deck, and shuffling in case the deck pile has finished and game is not over.
      */
     public void reAdd() {
         deck.addAll(discardedCards);
