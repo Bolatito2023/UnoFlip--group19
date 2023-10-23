@@ -4,11 +4,25 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="bed4e951-0f91-4b16-99dd-52d3a0ffa571" name="Changes" comment="Added Card class">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+    <list default="true" id="bed4e951-0f91-4b16-99dd-52d3a0ffa571" name="Changes" comment="Changed SDK">
+      <change afterPath="$PROJECT_DIR$/../Labs/Lab 2/Lab 2.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Labs/Lab 2/out/production/Lab 2/out/production/zuul-bad/zuul-bad.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Labs/Lab 2/out/production/Lab 2/zuul-bad.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Labs/Lab 2/zuul-updated-WH/zuul-updated-WH/out/production/zuul-bad/zuul-bad.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Labs/Lab 2/zuul-updated-WH/zuul-updated-WH/zuul-bad.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Labs/Lab 3/Lab 3/untitled/untitled.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Labs/Lab 3/Lab 3/untitled1/untitled1.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Labs/Lab 3b testing/Prof example_1/Test Example/Test Example.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Labs/Lab 3b testing/Prof_EventModel/Prof_EventModel/untitled/untitled.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Labs/Lab 3b testing/Testing observer/The test/The test.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Labs/Lab 3b/Lab 3/Lab 3.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Labs/Lab 4/Lab 4/Lab 4.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Labs/Lab 4/XML/XML.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Milestone1/Milestone1.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Project/Project Milestone 1/Project Milestone 1.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Project/untitled/untitled.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/artifacts/UnoFlip_game_jar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/artifacts/UnoFlip_game_jar.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UnoFlip game.iml" beforeDir="false" afterPath="$PROJECT_DIR$/UnoFlip game.iml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -46,8 +60,9 @@
     "Repository.Attach.Sources": "false",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "git-widget-placeholder": "master",
-    "last_opened_file_path": "C:/Carleton/Fall 2023/SYSC 3110/UnoFlip--group19",
+    "last_opened_file_path": "C:/Carleton/Fall 2023/SYSC 3110",
     "onboarding.tips.debug.path": "C:/Users/HP/Downloads/sysc 3110/UnoFlip game/src/Main.java",
     "project.structure.last.edited": "Artifacts",
     "project.structure.proportion": "0.15",
@@ -79,11 +94,20 @@
       <option name="project" value="LOCAL" />
       <updated>1698019876501</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Changed SDK">
+      <option name="closed" value="true" />
+      <created>1698031616690</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1698031616690</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Added Card class" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added Card class" />
+    <MESSAGE value="Changed SDK" />
+    <option name="LAST_COMMIT_MESSAGE" value="Changed SDK" />
   </component>
 </project>
