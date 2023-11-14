@@ -10,7 +10,7 @@ import static org.junit.Assert.*;
 public class UnoFlipTest {
     Deck testDeck;
     List<UnoPlayer> players;
-    UnoFlip testGame;
+    UnoFlipModel testGame;
 
     @Before
     public void setUp(){
@@ -25,7 +25,7 @@ public class UnoFlipTest {
         players.add(player1);
         players.add(player2);
 
-        testGame = new UnoFlip(players, testDeck);
+        testGame = new UnoFlipModel(players, testDeck);
     }
 
     @After
@@ -36,9 +36,9 @@ public class UnoFlipTest {
     public void reverseDirection() {
         setUp();
 
-        assertEquals(testGame.getDirection(), UnoFlip.Direction.FORWARD);
+        assertEquals(testGame.getDirection(), UnoFlipModel.Direction.FORWARD);
         testGame.reverseDirection();
-        assertEquals(testGame.getDirection(), UnoFlip.Direction.BACKWARD);
+        assertEquals(testGame.getDirection(), UnoFlipModel.Direction.BACKWARD);
     }
 
 }

@@ -5,6 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="bed4e951-0f91-4b16-99dd-52d3a0ffa571" name="Changes" comment="Changed SDK">
+      <change afterPath="$PROJECT_DIR$/src/UnoFlipView.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/../Labs/Lab 2/Lab 2.iml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/../Labs/Lab 2/out/production/Lab 2/out/production/zuul-bad/zuul-bad.iml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/../Labs/Lab 2/out/production/Lab 2/zuul-bad.iml" afterDir="false" />
@@ -18,11 +19,12 @@
       <change afterPath="$PROJECT_DIR$/../Labs/Lab 3b/Lab 3/Lab 3.iml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/../Labs/Lab 4/Lab 4/Lab 4.iml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/../Labs/Lab 4/XML/XML.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Milestone1 Submission/.idea/Milestone1 Submission.iml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/../Milestone1/Milestone1.iml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/../Project/Project Milestone 1/Project Milestone 1.iml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/../Project/untitled/untitled.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/artifacts/UnoFlip_game_jar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/artifacts/UnoFlip_game_jar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/UnoFlip.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/UnoFlipModel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -67,7 +69,7 @@
     "project.structure.last.edited": "Artifacts",
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "vcs.Git"
+    "settings.editor.selected.configurable": "project.scopes"
   },
   "keyToStringList": {
     "ChangesTree.GroupingKeys": [

@@ -37,7 +37,7 @@ public class main {
             players.add(player);
         }
 
-        UnoFlip unoGame = new UnoFlip(players, deck);
+        UnoFlipModel unoGame = new UnoFlipModel(players, deck);
 
         unoGame.play();
         scanner.close();
