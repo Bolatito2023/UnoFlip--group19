@@ -16,6 +16,8 @@ public class UnoFlipModel {
     private int roundNumber;
     private Scanner scan;
 
+    private List<UnoFlipModelView> views;
+
     public UnoFlipModel(List<UnoPlayer> players, Deck deck) {
         this.players = players;
         direction = Direction.FORWARD;
@@ -29,18 +31,86 @@ public class UnoFlipModel {
         for (UnoPlayer player : players) {
             scores.put(player.getPlayerName(), 0);
         }
+        this.views = new ArrayList<UnoFlipModelView>();
     }
 
     public void reverseDirection() {
         direction = (direction == Direction.FORWARD) ? Direction.BACKWARD : Direction.FORWARD;
     }
+    public void addUnoFlipView(UnoFlipModelView view){
+
+        this.views.add(view);
+    }
+    public void giveCard(){
+        Card card = deck.draw();
+        getCurrentPlayer().drawCard(card);
+        currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
+    }
+
+
+    public void removeUnoFlipView(UnoFlipModelView view){
+
+        this.views.remove(view);
+    }
+    public Card getCurrentCard(){
+        return currentCard;
+    }
+    public UnoPlayer getCurrentPlayer(){
+
+        return players.get(currentPlayerIndex);
+    }
+
+    public UnoPlayer getNextPlayer(Direction direction){
+        if (players.isEmpty()) {
+            return null; // No players in the list
+        }
+
+        int nextPlayerIndex;
+
+        if (direction == Direction.FORWARD) {
+            nextPlayerIndex = (currentPlayerIndex +1) % players.size();
+
+        } else {
+            nextPlayerIndex= (currentPlayerIndex - 1 + players.size()) % players.size();
+        }
+        currentPlayerIndex = nextPlayerIndex;
+
+
+        return players.get(currentPlayerIndex);
+    }
+    /**public UnoPlayer getNextPlayer(Direction direction) {
+     if (players.isEmpty()) {
+     return null; // No players in the list
+     }
+
+     int nextPlayerIndex;
+
+     if (direction == Direction.FORWARD) {
+     nextPlayerIndex = currentPlayerIndex + 1;
+     if (nextPlayerIndex >= players.size()) {
+     nextPlayerIndex = 0; // Loop back to the last player
+     }
+     } else { // Direction forward
+     nextPlayerIndex = currentPlayerIndex - 1;
+     if (nextPlayerIndex < 0) {
+     nextPlayerIndex = players.size() - 1; // Loop back to the first player
+     }
+     }
+
+     currentPlayerIndex = nextPlayerIndex; // Update the current player index
+
+     return players.get(currentPlayerIndex);
+     }*/
+
+
+
 
     public Direction getDirection(){
         return direction;
     }
 
     //calculate the total score of each player.
-    private int calculateScore() {
+    public int calculateScore() {
         int totalScore = 0;
         for (UnoPlayer player : players) {
             if (player != players.get(currentPlayerIndex)) { // Exclude the current player
@@ -51,7 +121,15 @@ public class UnoFlipModel {
         }
         return totalScore;
     }
-    private void noPlayableDrawCards(UnoPlayer player) {
+    public Card getTopCard(){
+        currentCard = deck.draw();
+        do {
+            currentCard = deck.draw();
+        } while (currentCard.getCardType() != Card.CardType.NUMBER); //Game does not start deck with action card.
+        return currentCard;
+    }
+
+    public void noPlayableDrawCards(UnoPlayer player) {
         System.out.println(player.getPlayerName() + "'s Hand: " + player.getHand());
         System.out.print(player.getPlayerName() + ", you don't have any playable cards. Press Enter key to draw a card: ");
         scan.nextLine(); // Waits for the player to press Enter
@@ -72,18 +150,19 @@ public class UnoFlipModel {
 
     public void play() {
         printWelcome();
-        int skipsThisTurn=0;
+
 
 
         Scanner scanner = new Scanner(System.in);
         boolean unoGameWon = false;
 
 
-        currentCard = deck.draw();
-        do {
-            currentCard = deck.draw();
-        } while (currentCard.getCardType() != Card.CardType.NUMBER); //Game does not start deck with action card.
-
+        /**currentCard = deck.draw();
+         do {
+         currentCard = deck.draw();
+         } while (currentCard.getCardType() != Card.CardType.NUMBER); //Game does not start deck with action card.
+         */
+        getTopCard();
         System.out.println("Round " + roundNumber);
 
         for(UnoPlayer pla :players){
@@ -375,3 +454,4 @@ public class UnoFlipModel {
     }
 
 }
+
