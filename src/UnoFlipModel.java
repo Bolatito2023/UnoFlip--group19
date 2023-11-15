@@ -1,3 +1,4 @@
+import javax.swing.*;
 import java.util.*;
 public class UnoFlipModel {
     boolean direction = true;
@@ -13,6 +14,11 @@ public class UnoFlipModel {
     UnoFlipModelViewFrame view;
     private UnoPlayer currentPlayer;
 
+    /**
+     * Constructs an UnoFlip game model.
+     * @param numPlayers the number of players in game.
+     * @param deck the game's card deck.
+     */
     public UnoFlipModel(int numPlayers, Deck deck) {
         players = new ArrayList<>();
         initializePlayers(numPlayers, deck);
@@ -37,7 +43,10 @@ public class UnoFlipModel {
         Scanner scanner = new Scanner(System.in);
 
         for (int i = 1; i <= numPlayers; i++) {
-            String playerName = "Player " + i;
+            String playerName = JOptionPane.showInputDialog(null,
+                    "Enter Player 1's name",
+                    "Name:",
+                    JOptionPane.QUESTION_MESSAGE);
             UnoPlayer player = new UnoPlayer(playerName, deck);
             players.add(player);
         }
