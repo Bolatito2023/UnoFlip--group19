@@ -35,8 +35,7 @@ public class UnoFlipModel {
     }
 
     /**
-     * Initializes the players by collecting their names from the user.
-     *
+     * Initializes the players of the game and allows user to enter their names.
      * @param numPlayers The number of players in the game.
      */
     private void initializePlayers(int numPlayers, Deck deck) {
@@ -53,38 +52,17 @@ public class UnoFlipModel {
     }
 
     /**
-     * Displays the current player's hand.
-     *
-     * @param currentPlayer The current player.
-     */
-    private void displayCurrentPlayerHand(UnoPlayer currentPlayer) {
-        System.out.print("Player " + currentPlayer.getPlayerName() + "'s cards: \n");
-        List<Card> hand = currentPlayer.getHand().getCards();
-        for (int j = 0; j < hand.size(); j++) {
-            Card card = hand.get(j);
-            System.out.print((j + 1) + "- " + card.toString());
-            if (j < hand.size() - 1) {
-                System.out.print(",\n");
-            }
-        }
-        System.out.println();
-    }
-
-    /**
-     * Checks if a card is a valid play in the Uno game.
-     *
-     * @param card The card to check.
+     * Checks if the card can be played.
+     * @param card The card to be checked.
      * @return True if the card can be played; otherwise, false.
      */
     public boolean isValidUnoPlay(Card card) {
-        System.out.println("is valid reached");
         return card.getColour() == currentCard.getColour() || card.getNumber() == currentCard.getNumber();
     }
 
     /**
-     * Calculates the score for the winning player based on opponents' cards.
-     *
-     * @param winner The player who won the round.
+     * Calculates the score for the winning player.
+     * @param winner player that won.
      */
     private void calculateScoreForwinner(UnoPlayer winner) {
         int finalScore = 0;
@@ -144,75 +122,6 @@ public class UnoFlipModel {
     }
 
     /**
-     * Starts the Uno game and manages the game flow.
-     */
-    public void play() {
-        boolean gameRunning = true;
-        boolean go_next = true;
-        Scanner scanner = new Scanner(System.in);
-
-        while (gameRunning) {
-            UnoPlayer currentPlayer = players.get(currentPlayerIndex);
-            displayGameStatus(currentPlayer);
-
-            int cardIndex = getPlayerInput(scanner, currentPlayer);
-
-            if (cardIndex == 0) {
-                handleDrawCard(currentPlayer);
-                go_next = true;
-            } else {
-            }
-
-            handleUnoStatus(scanner, currentPlayer);
-
-            if (currentPlayer.getHand().handSize() == 0) {
-                handleWinOrPenalty(currentPlayer);
-                gameRunning = currentPlayer.getHand().handSize() != 0;
-            }
-
-            if (go_next) {
-                currentPlayerIndex = (currentPlayerIndex + (direction ? 1 : -1) + players.size()) % players.size();
-            }
-        }
-    }
-
-    /**
-     * Displays the game status, including the top card and the current player's hand.
-     *
-     * @param currentPlayer The current player.
-     */
-    private void displayGameStatus(UnoPlayer currentPlayer) {
-        System.out.println("Top Card: " + currentCard.toString());
-        System.out.println("Player " + currentPlayer.getPlayerName() + "'s turn");
-        displayCurrentPlayerHand(currentPlayer);
-    }
-
-    /**
-     * Gets the player's input for selecting a card to play or drawing a card.
-     *
-     * @param scanner       The input scanner.
-     * @param currentPlayer The current player.
-     * @return The index of the selected card or 0 to draw a card.
-     */
-    private int getPlayerInput(Scanner scanner, UnoPlayer currentPlayer) {
-        int cardIndex;
-        while (true) {
-            System.out.println("Enter card index to play (1 to " + currentPlayer.getHand().handSize() + ") or 0 to draw a card:");
-            if (scanner.hasNextInt()) {
-                cardIndex = scanner.nextInt();
-                if (cardIndex >= 0 && cardIndex <= currentPlayer.getHand().handSize()) {
-                    return cardIndex;
-                } else {
-                    System.out.println("Invalid Index for Hand, Please try again.");
-                }
-            } else {
-                System.out.println("Invalid input. Please enter a valid integer.");
-                scanner.nextLine();
-            }
-        }
-    }
-
-    /**
      * Handles drawing a card from the deck.
      *
      * @param currentPlayer The current player who is drawing a card.
@@ -228,37 +137,10 @@ public class UnoFlipModel {
     }
 
     /**
-     * Handles playing a card from the player's hand.
+     * Handles Uno status and reminds the player to say Uno if they are at one card.
      *
-     * @param scanner       The input scanner.
-     * @param currentPlayer  The current player.
-     * @param cardIndex     The index of the card to play.
-     * @param direction     The direction of play.
-     * @return True if the play was successful; otherwise, false.
-     */
-    /*private boolean handlePlayCard(Scanner scanner, Player currentPlayer, int cardIndex, boolean direction) {
-        Card selectedCard = currentPlayer.getHand().getCards().get(cardIndex - 1);
-        if (selectedCard.getValue() == Card.Value.WILD) {
-            return handleWildCard(scanner, currentPlayer, selectedCard);
-        } else if (selectedCard.getValue() == Card.Value.SKIP) {
-            return handleSkipCard(currentPlayer, selectedCard, direction);
-        } else if (selectedCard.getValue() == Card.Value.REVERSE) {
-            return handleReverseCard(currentPlayer, selectedCard, direction);
-        } else if (selectedCard.getValue() == Card.Value.WILD_DRAW_TWO_CARDS && selectedCard.getColor() == topCard.getColor()) {
-            return handleWildDrawTwoCards(scanner, currentPlayer, selectedCard, direction);
-        } else if (isValidUnoPlay(selectedCard)) {
-            return handleValidPlay(currentPlayer, selectedCard);
-        } else {
-            System.out.println("Invalid play. Try again.");
-            return false;
-        }
-    }*/
-
-    /**
-     * Handles Uno status and reminds the player to say Uno if applicable.
-     *
-     * @param scanner       The input scanner.
-     * @param currentPlayer The current player.
+     * @param scanner the input scanner.
+     * @param currentPlayer the current player.
      */
     private void handleUnoStatus(Scanner scanner, UnoPlayer currentPlayer) {
         if (currentPlayer.hasUno() && !currentPlayer.hasRemindedUno()) {
@@ -409,21 +291,37 @@ public class UnoFlipModel {
 
     }
 
+    /**
+     * Returns the current player.
+     * @return currentPlayer the current player.
+     */
     public UnoPlayer getCurrentPlayer() {
         UnoPlayer currentPlayer = players.get(currentPlayerIndex);
         return currentPlayer;
     }
 
+    /**
+     * Returns the next player.
+     * @return currentPlayer the next player.
+     */
     public UnoPlayer getNextCurrentPlayer() {
         currentPlayerIndex = (currentPlayerIndex + (direction ? 1 : -1) + players.size()) % players.size();
         view.update();
         return currentPlayer;
     }
 
+    /**
+     * Returns the current Card.
+     * @return currentCard the current card in play.
+     */
     public Card getTopCard() {
         return currentCard;
     }
 
+    /**
+     * Returns the direction of play.
+     * @return True if forwards, False if backwards.
+     */
     public boolean getDirection() {
         return direction;
     }
