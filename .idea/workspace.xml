@@ -4,9 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="bed4e951-0f91-4b16-99dd-52d3a0ffa571" name="Changes" comment="added javadoc to UnoFlipModel">
+    <list default="true" id="bed4e951-0f91-4b16-99dd-52d3a0ffa571" name="Changes" comment="added javadoc to Deck">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/UnoPlayer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/UnoPlayer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/UnoFlipController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/UnoFlipController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/UnoFlipModelViewFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/UnoFlipModelViewFrame.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -170,7 +171,23 @@
       <option name="project" value="LOCAL" />
       <updated>1700020871415</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="added javadoc to UnoPlayer">
+      <option name="closed" value="true" />
+      <created>1700021258948</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1700021258948</updated>
+    </task>
+    <task id="LOCAL-00012" summary="added javadoc to Deck">
+      <option name="closed" value="true" />
+      <created>1700021591019</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1700021591019</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -182,6 +199,8 @@
     <MESSAGE value="Deleted main, changed main class to UnoFlipModelViewFrame" />
     <MESSAGE value="allow player to choose name, and renamed wild card image" />
     <MESSAGE value="added javadoc to UnoFlipModel" />
-    <option name="LAST_COMMIT_MESSAGE" value="added javadoc to UnoFlipModel" />
+    <MESSAGE value="added javadoc to UnoPlayer" />
+    <MESSAGE value="added javadoc to Deck" />
+    <option name="LAST_COMMIT_MESSAGE" value="added javadoc to Deck" />
   </component>
 </project>

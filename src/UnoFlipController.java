@@ -10,15 +10,21 @@ public class UnoFlipController  implements ActionListener {
     UnoPlayer currentPlayer;
 
 
-
+    /**
+     * Constructs a controller for UnoFlip.
+     * @param game the UnoFlip game being played.
+     * @param view the viewer for the UnoFlip game being played.
+     */
     public UnoFlipController(UnoFlipModel game, UnoFlipModelViewFrame view) {
         super();
         this.gameModel = game;
         this.gameView = view;
-
-
     }
 
+    /**
+     * Handles player actions.
+     * @param e the event to be processed.
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         currentPlayer = gameModel.getCurrentPlayer();
@@ -32,7 +38,7 @@ public class UnoFlipController  implements ActionListener {
             currentPlayer = gameModel.getNextCurrentPlayer();
             gameView.nextPlayerButton(false);
             gameView.drawCardButton(true);
-            gameView.updateMessages("Choose a card or draw a card");
+            gameView.updateMessages("Pick a card to play or draw a card");
 
         }
         for (Card c : handCards) {
@@ -58,13 +64,17 @@ public class UnoFlipController  implements ActionListener {
                     break;
                 }
                 else {
-                    gameView.updateMessages("Invalid play");
+                    gameView.updateMessages("This card cannot be played!");
                     gameView.drawCardButton(true);
                 }
             }
         }
     }
 
+    /**
+     * Returns the colour a player chooses after playing a wild card.
+     * @return the colour the current player chooses.
+     */
     private static Card.Colour chooseColour() {
         Card.Colour[] possibleColours = Card.Colour.values();
         String[] colourNames = new String[possibleColours.length];
@@ -97,6 +107,4 @@ public class UnoFlipController  implements ActionListener {
             }
         }
     }
-
-
 }
