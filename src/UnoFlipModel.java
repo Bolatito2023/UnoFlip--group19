@@ -1,457 +1,421 @@
 import java.util.*;
 public class UnoFlipModel {
-    public enum Direction {FORWARD, BACKWARD}
+    boolean direction = true;
 
     public enum Side {LIGHT, DARK}
 
     private List<UnoPlayer> players;
-    private Deck deck;
     private Card currentCard;
-
-    private Direction direction;
+    private Deck deck;
     private Side side;
     private int currentPlayerIndex;
-    private HashMap<String, Integer> scores;
-    private Card.Colour chosenColor = null;
     private int roundNumber;
-    private Scanner scan;
+    UnoFlipModelViewFrame view;
+    private UnoPlayer currentPlayer;
 
-    private List<UnoFlipModelView> views;
-
-    public UnoFlipModel(List<UnoPlayer> players, Deck deck) {
-        this.players = players;
-        direction = Direction.FORWARD;
+    public UnoFlipModel(int numPlayers, Deck deck) {
+        players = new ArrayList<>();
+        initializePlayers(numPlayers, deck);
+        direction = true;
         side = Side.LIGHT;
+        currentPlayerIndex = 0;
         this.deck = deck;
-        this.currentPlayerIndex = 0;
-        this.roundNumber=1;
-        scan = new Scanner(System.in);
-        //Initialize score of each player
-        scores = new HashMap<>();
-        for (UnoPlayer player : players) {
-            scores.put(player.getPlayerName(), 0);
+        currentCard = deck.draw();
+        roundNumber = 1;
+    }
+
+    public void addView(UnoFlipModelViewFrame view) {
+        this.view = view;
+    }
+
+    /**
+     * Initializes the players by collecting their names from the user.
+     *
+     * @param numPlayers The number of players in the game.
+     */
+    private void initializePlayers(int numPlayers, Deck deck) {
+        Scanner scanner = new Scanner(System.in);
+
+        for (int i = 1; i <= numPlayers; i++) {
+            String playerName = "Player " + i;
+            UnoPlayer player = new UnoPlayer(playerName, deck);
+            players.add(player);
         }
-        this.views = new ArrayList<UnoFlipModelView>();
     }
 
-    public void reverseDirection() {
-        direction = (direction == Direction.FORWARD) ? Direction.BACKWARD : Direction.FORWARD;
-    }
-    public void addUnoFlipView(UnoFlipModelView view){
-
-        this.views.add(view);
-    }
-    public void giveCard(){
-        Card card = deck.draw();
-        getCurrentPlayer().drawCard(card);
-        currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
-    }
-
-
-    public void removeUnoFlipView(UnoFlipModelView view){
-
-        this.views.remove(view);
-    }
-    public Card getCurrentCard(){
-        return currentCard;
-    }
-    public UnoPlayer getCurrentPlayer(){
-
-        return players.get(currentPlayerIndex);
+    /**
+     * Displays the current player's hand.
+     *
+     * @param currentPlayer The current player.
+     */
+    private void displayCurrentPlayerHand(UnoPlayer currentPlayer) {
+        System.out.print("Player " + currentPlayer.getPlayerName() + "'s cards: \n");
+        List<Card> hand = currentPlayer.getHand().getCards();
+        for (int j = 0; j < hand.size(); j++) {
+            Card card = hand.get(j);
+            System.out.print((j + 1) + "- " + card.toString());
+            if (j < hand.size() - 1) {
+                System.out.print(",\n");
+            }
+        }
+        System.out.println();
     }
 
-    public UnoPlayer getNextPlayer(Direction direction){
-        if (players.isEmpty()) {
-            return null; // No players in the list
+    /**
+     * Checks if a card is a valid play in the Uno game.
+     *
+     * @param card The card to check.
+     * @return True if the card can be played; otherwise, false.
+     */
+    public boolean isValidUnoPlay(Card card) {
+        System.out.println("is valid reached");
+        return card.getColour() == currentCard.getColour() || card.getNumber() == currentCard.getNumber();
+    }
+
+    /**
+     * Calculates the score for the winning player based on opponents' cards.
+     *
+     * @param winner The player who won the round.
+     */
+    private void calculateScoreForwinner(UnoPlayer winner) {
+        int finalScore = 0;
+
+        // Iterate through the remaining players' hands
+        for (UnoPlayer opponent : players) {
+            if (opponent != winner) {
+                for (Card card : opponent.getHand().getCards()) {
+                    Card.CardType cardT = card.getCardType();
+                    Card.Number num = card.getNumber();
+
+                    if (cardT == Card.CardType.SKIP || cardT == Card.CardType.REVERSE || cardT == Card.CardType.FLIP) {
+                        finalScore+= 20;
+                    }
+                    if (cardT == Card.CardType.WILD_DRAW_TWO ) {
+                        finalScore+= 50;
+                    }
+                    if (num == Card.Number.ONE) {
+                        finalScore+= 1;
+                    }
+                    if (num == Card.Number.TWO) {
+                        finalScore+= 2;
+                    }
+                    if (num == Card.Number.THREE) {
+                        finalScore+= 3;
+                    }
+                    if (num == Card.Number.FOUR) {
+                        finalScore+= 4;
+                    }
+                    if (num == Card.Number.FIVE) {
+                        finalScore+= 5;
+                    }
+                    if (num == Card.Number.SIX) {
+                        finalScore+= 6;
+                    }
+                    if (num == Card.Number.SEVEN) {
+                        finalScore+= 7;
+                    }
+                    if (num == Card.Number.EIGHT) {
+                        finalScore+= 8;
+                    }
+                    if (num == Card.Number.NINE) {
+                        finalScore+= 9;
+                    }
+                    if (cardT == Card.CardType.WILD) {
+                        finalScore+= 40;
+                    }
+                    if (cardT == Card.CardType.DRAW_ONE) {
+                        finalScore+= 10;
+                    }
+                }
+            }
         }
 
-        int nextPlayerIndex;
+        winner.updateScore(finalScore);
+        System.out.println("Player " + winner.getPlayerName() + " scored " + finalScore + " points and won!");
+    }
 
-        if (direction == Direction.FORWARD) {
-            nextPlayerIndex = (currentPlayerIndex +1) % players.size();
+    /**
+     * Starts the Uno game and manages the game flow.
+     */
+    public void play() {
+        boolean gameRunning = true;
+        boolean go_next = true;
+        Scanner scanner = new Scanner(System.in);
+
+        while (gameRunning) {
+            UnoPlayer currentPlayer = players.get(currentPlayerIndex);
+            displayGameStatus(currentPlayer);
+
+            int cardIndex = getPlayerInput(scanner, currentPlayer);
+
+            if (cardIndex == 0) {
+                handleDrawCard(currentPlayer);
+                go_next = true;
+            } else {
+            }
+
+            handleUnoStatus(scanner, currentPlayer);
+
+            if (currentPlayer.getHand().handSize() == 0) {
+                handleWinOrPenalty(currentPlayer);
+                gameRunning = currentPlayer.getHand().handSize() != 0;
+            }
+
+            if (go_next) {
+                currentPlayerIndex = (currentPlayerIndex + (direction ? 1 : -1) + players.size()) % players.size();
+            }
+        }
+    }
+
+    /**
+     * Displays the game status, including the top card and the current player's hand.
+     *
+     * @param currentPlayer The current player.
+     */
+    private void displayGameStatus(UnoPlayer currentPlayer) {
+        System.out.println("Top Card: " + currentCard.toString());
+        System.out.println("Player " + currentPlayer.getPlayerName() + "'s turn");
+        displayCurrentPlayerHand(currentPlayer);
+    }
+
+    /**
+     * Gets the player's input for selecting a card to play or drawing a card.
+     *
+     * @param scanner       The input scanner.
+     * @param currentPlayer The current player.
+     * @return The index of the selected card or 0 to draw a card.
+     */
+    private int getPlayerInput(Scanner scanner, UnoPlayer currentPlayer) {
+        int cardIndex;
+        while (true) {
+            System.out.println("Enter card index to play (1 to " + currentPlayer.getHand().handSize() + ") or 0 to draw a card:");
+            if (scanner.hasNextInt()) {
+                cardIndex = scanner.nextInt();
+                if (cardIndex >= 0 && cardIndex <= currentPlayer.getHand().handSize()) {
+                    return cardIndex;
+                } else {
+                    System.out.println("Invalid Index for Hand, Please try again.");
+                }
+            } else {
+                System.out.println("Invalid input. Please enter a valid integer.");
+                scanner.nextLine();
+            }
+        }
+    }
+
+    /**
+     * Handles drawing a card from the deck.
+     *
+     * @param currentPlayer The current player who is drawing a card.
+     */
+    protected void handleDrawCard(UnoPlayer currentPlayer) {
+        Card drawnCard = deck.draw();
+        currentPlayer.drawCard(drawnCard);
+        view.updateDrawCardMessagePanel("Player " + currentPlayer.getPlayerName() + " drew a card: ", drawnCard);
+        view.nextPlayerButton(true);
+        view.drawCardButton(false);
+        view.update();
+        view.cardButtons(false);
+    }
+
+    /**
+     * Handles playing a card from the player's hand.
+     *
+     * @param scanner       The input scanner.
+     * @param currentPlayer  The current player.
+     * @param cardIndex     The index of the card to play.
+     * @param direction     The direction of play.
+     * @return True if the play was successful; otherwise, false.
+     */
+    /*private boolean handlePlayCard(Scanner scanner, Player currentPlayer, int cardIndex, boolean direction) {
+        Card selectedCard = currentPlayer.getHand().getCards().get(cardIndex - 1);
+        if (selectedCard.getValue() == Card.Value.WILD) {
+            return handleWildCard(scanner, currentPlayer, selectedCard);
+        } else if (selectedCard.getValue() == Card.Value.SKIP) {
+            return handleSkipCard(currentPlayer, selectedCard, direction);
+        } else if (selectedCard.getValue() == Card.Value.REVERSE) {
+            return handleReverseCard(currentPlayer, selectedCard, direction);
+        } else if (selectedCard.getValue() == Card.Value.WILD_DRAW_TWO_CARDS && selectedCard.getColor() == topCard.getColor()) {
+            return handleWildDrawTwoCards(scanner, currentPlayer, selectedCard, direction);
+        } else if (isValidUnoPlay(selectedCard)) {
+            return handleValidPlay(currentPlayer, selectedCard);
+        } else {
+            System.out.println("Invalid play. Try again.");
+            return false;
+        }
+    }*/
+
+    /**
+     * Handles Uno status and reminds the player to say Uno if applicable.
+     *
+     * @param scanner       The input scanner.
+     * @param currentPlayer The current player.
+     */
+    private void handleUnoStatus(Scanner scanner, UnoPlayer currentPlayer) {
+        if (currentPlayer.hasUno() && !currentPlayer.hasRemindedUno()) {
+            System.out.println("Player " + currentPlayer.getPlayerName() + ", you have Uno! Don't forget to say it.");
+            currentPlayer.setRemindedUno(true);
+        }
+        if (currentPlayer.getHand().handSize() == 1) {
+            System.out.println("Type 'UNO' to say it: ");
+            String unoInput = scanner.next().trim().toUpperCase();
+            if (unoInput.equals("UNO")) {
+                currentPlayer.sayUno();
+            }
+        }
+    }
+
+    /**
+     * Handles the outcome when a player wins or fails to say Uno.
+     *
+     * @param currentPlayer The current player.
+     */
+    private void handleWinOrPenalty(UnoPlayer currentPlayer) {
+        if (currentPlayer.getUnoCalled()) {
+            System.out.println("Player " + currentPlayer.getPlayerName() + " wins!");
+            calculateScoreForwinner(currentPlayer);
+        } else {
+            System.out.println("Player " + currentPlayer.getPlayerName() + " did not say Uno and draws 2 cards.");
+            currentPlayer.drawCard(deck.draw());
+            currentPlayer.drawCard(deck.draw());
+            currentPlayer.setRemindedUno(false);
+        }
+    }
+
+    /**
+     * Handles playing a Wild card and allows the player to choose the color.
+     *
+     * @param colour        The input for the colour chosen.
+     * @param currentPlayer The current player.
+     * @param selectedCard  The Wild card to play.
+     * @return True if the play was successful; otherwise, false.
+     */
+    public void handleWildCard(Card.Colour colour, UnoPlayer currentPlayer, Card selectedCard) {
+        //String chosenColor = getChosenColor(scanner);
+        //System.out.println("Player " + currentPlayer.getName() + " plays: " + selectedCard.stringCard() + " color chosen: " + chosenColor);
+        currentPlayer.playCard(selectedCard);
+        currentCard = new Card(colour, Card.CardType.WILD);
+        System.out.println("handleWildCard is reached");
+        view.nextPlayerButton(true);
+        view.drawCardButton(false);
+        view.cardButtons(false);
+        view.updateMessages(colour + " has been chosen. Player " + currentPlayerIndex + " has to draw place a " + colour + "colour card");
+        view.update();
+    }
+
+    /**
+     * Handles playing a Skip card. If the card matches the color of the top card,
+     * it skips the next player's turn.
+     *
+     * @param currentPlayer The current player.
+     * @param selectedCard  The Skip card to play.
+     * @param direction     The direction of play.
+     * @return True if the play was successful; otherwise, false.
+     */
+    public void handleSkipCard(UnoPlayer currentPlayer, Card selectedCard, boolean direction) {
+        if (selectedCard.getColour() == currentCard.getColour() || currentCard.getCardType() == Card.CardType.SKIP) {
+            //System.out.println("Player " + currentPlayer.getName() + " plays: " + selectedCard.stringCard());
+            currentPlayer.playCard(selectedCard);
+            currentCard = selectedCard;
+            currentPlayerIndex = (currentPlayerIndex + (direction ? 1 : -1) + players.size()) % players.size();
+            view.nextPlayerButton(true);
+            view.drawCardButton(false);
+            view.update();
+            view.cardButtons(false);
+
 
         } else {
-            nextPlayerIndex= (currentPlayerIndex - 1 + players.size()) % players.size();
+            view.updateMessages("Invalid play. The card must match the color of the top card.");
         }
-        currentPlayerIndex = nextPlayerIndex;
-
-
-        return players.get(currentPlayerIndex);
-    }
-    /**public UnoPlayer getNextPlayer(Direction direction) {
-     if (players.isEmpty()) {
-     return null; // No players in the list
-     }
-
-     int nextPlayerIndex;
-
-     if (direction == Direction.FORWARD) {
-     nextPlayerIndex = currentPlayerIndex + 1;
-     if (nextPlayerIndex >= players.size()) {
-     nextPlayerIndex = 0; // Loop back to the last player
-     }
-     } else { // Direction forward
-     nextPlayerIndex = currentPlayerIndex - 1;
-     if (nextPlayerIndex < 0) {
-     nextPlayerIndex = players.size() - 1; // Loop back to the first player
-     }
-     }
-
-     currentPlayerIndex = nextPlayerIndex; // Update the current player index
-
-     return players.get(currentPlayerIndex);
-     }*/
-
-
-
-
-    public Direction getDirection(){
-        return direction;
     }
 
-    //calculate the total score of each player.
-    public int calculateScore() {
-        int totalScore = 0;
-        for (UnoPlayer player : players) {
-            if (player != players.get(currentPlayerIndex)) { // Exclude the current player
-                for (Card card : player.getHand().getCards()) {
-                    totalScore += card.Scoring();
-                }
-            }
+    /**
+     * Handles playing a Reverse card. If the card matches the color of the top card,
+     * it reverses the direction of play.
+     *
+     * @param currentPlayer The current player.
+     * @param selectedCard  The Reverse card to play.
+     * @param direction     The direction of play.
+     * @return True if the play was successful; otherwise, false.
+     */
+    public void handleReverseCard(UnoPlayer currentPlayer, Card selectedCard, boolean direction) {
+        if (selectedCard.getColour() == currentCard.getColour() || currentCard.getCardType() == Card.CardType.REVERSE) {
+            //System.out.println("Player " + currentPlayer.getName() + " plays: " + selectedCard.stringCard());
+            currentPlayer.playCard(selectedCard);
+            currentCard = selectedCard;
+            this.direction = !direction;
+            view.nextPlayerButton(true);
+            view.drawCardButton(false);
+            view.update();
+            view.cardButtons(false);
+        } else {
+            view.updateMessages("Invalid play. The card must match the color of the top card.");
+
         }
-        return totalScore;
     }
-    public Card getTopCard(){
-        currentCard = deck.draw();
-        do {
-            currentCard = deck.draw();
-        } while (currentCard.getCardType() != Card.CardType.NUMBER); //Game does not start deck with action card.
+
+    /**
+     * Handles playing a Wild Draw Two Cards. If the card matches the color of the top card,
+     * it forces the next player to draw two cards and skips their turn.
+     *
+     * @param colour        The input for the colour chosen.
+     * @param currentPlayer The current player.
+     * @param selectedCard  The Wild Draw Two Cards to play.
+     * @param direction     The direction of play.
+     * @return True if the play was successful; otherwise, false.
+     */
+    public void handleWildDrawTwoCards(Card.Colour colour, UnoPlayer currentPlayer, Card selectedCard, boolean direction) {
+        //String chosenColor = getChosenColor(scanner);
+        //System.out.println("Player " + currentPlayer.getName() + " plays: " + selectedCard.stringCard() + " color chosen: " + chosenColor);
+        currentPlayer.playCard(selectedCard);
+        currentCard = new Card(colour, Card.CardType.WILD_DRAW_TWO);
+
+        currentPlayerIndex = (currentPlayerIndex + (direction ? 1 : -1) + players.size()) % players.size();
+        UnoPlayer nextPlayer = players.get(currentPlayerIndex);
+        nextPlayer.drawCard(deck.draw());
+        nextPlayer.drawCard(deck.draw());
+        System.out.println("handleWildDrawTwoCards is reached");
+        view.nextPlayerButton(true);
+        view.drawCardButton(false);
+        view.updateMessages(colour + " has been chosen. Player " + currentPlayerIndex + " has to draw 2 cards. due to wild draw two");
+        view.update();
+        view.cardButtons(false);
+    }
+
+    /**
+     * Handles a valid card play that matches the color or value of the top card.
+     *
+     * @param currentPlayer The current player.
+     * @param selectedCard  The card to play.
+     * @return True if the play was successful; otherwise, false.
+     */
+    public void handleValidPlay(UnoPlayer currentPlayer, Card selectedCard) {
+        System.out.println("Player " + currentPlayer.getPlayerName() + " plays: " + selectedCard.toString());
+        currentPlayer.playCard(selectedCard);
+        currentCard = selectedCard;
+        view.nextPlayerButton(true);
+        view.drawCardButton(false);
+        view.update();
+        view.cardButtons(false);
+
+    }
+
+    public UnoPlayer getCurrentPlayer() {
+        UnoPlayer currentPlayer = players.get(currentPlayerIndex);
+        return currentPlayer;
+    }
+
+    public UnoPlayer getNextCurrentPlayer() {
+        currentPlayerIndex = (currentPlayerIndex + (direction ? 1 : -1) + players.size()) % players.size();
+        view.update();
+        return currentPlayer;
+    }
+
+    public Card getTopCard() {
         return currentCard;
     }
 
-    public void noPlayableDrawCards(UnoPlayer player) {
-        System.out.println(player.getPlayerName() + "'s Hand: " + player.getHand());
-        System.out.print(player.getPlayerName() + ", you don't have any playable cards. Press Enter key to draw a card: ");
-        scan.nextLine(); // Waits for the player to press Enter
-        Card drawnCard = deck.draw();
-        player.drawCard(drawnCard);
-        System.out.println();
-        System.out.println(player.getPlayerName() + " draws a card: " + drawnCard);
+    public boolean getDirection() {
+        return direction;
     }
-
-
-    private void printWelcome() {
-        System.out.println();
-        System.out.println("Welcome to the game of UnoFlip!");
-        System.out.println("Plays like regular UNO, except there are two sides to the deck of cards");
-        System.out.println();
-    }
-
-
-    public void play() {
-        printWelcome();
-
-
-
-        Scanner scanner = new Scanner(System.in);
-        boolean unoGameWon = false;
-
-
-        /**currentCard = deck.draw();
-         do {
-         currentCard = deck.draw();
-         } while (currentCard.getCardType() != Card.CardType.NUMBER); //Game does not start deck with action card.
-         */
-        getTopCard();
-        System.out.println("Round " + roundNumber);
-
-        for(UnoPlayer pla :players){
-            System.out.println(pla.getPlayerName() +" current score is "+scores.get(pla.getPlayerName()));
-        }
-
-        while (!unoGameWon) {
-
-
-            UnoPlayer currentPlayer = players.get(currentPlayerIndex);
-            Hand currentHand = currentPlayer.getHand();
-
-            List<Card> playableCards = currentHand.getPlayableCards(currentCard, chosenColor);
-            System.out.println();
-
-
-
-            System.out.println("You are currently on the " + side + " side");
-            System.out.println("Current Card on discard pile: " + currentCard);
-
-            if (!playableCards.isEmpty()) {
-
-                if (currentCard.getCardType() == Card.CardType.SKIP) {
-
-                    if (direction == Direction.FORWARD) {
-                        System.out.println(currentPlayer.getPlayerName() + " you can't play; you have been given a skip.");
-                        currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
-                        currentPlayer = players.get(currentPlayerIndex);
-                        currentHand = currentPlayer.getHand();
-                    } else {
-                        System.out.println(currentPlayer.getPlayerName() + " you can't play; you have been given a skip.");
-                        if (currentPlayerIndex == 0) {
-                            currentPlayerIndex = players.size() - 1; // Wrap around to the last player
-                        } else {
-                            currentPlayerIndex = (currentPlayerIndex - 1) % players.size();
-                        }
-                        currentPlayer = players.get(currentPlayerIndex);
-                        currentHand = currentPlayer.getHand();
-                    }
-
-                }
-                if (currentCard.getCardType() == Card.CardType.DRAW_ONE) {
-                    if (direction == Direction.FORWARD) {
-                        currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
-                    } else {
-                        currentPlayerIndex = (currentPlayerIndex - 1 + players.size()) % players.size();
-                    }
-                    UnoPlayer nextPlayer = players.get(currentPlayerIndex);
-                    System.out.print(currentPlayer.getPlayerName() + ", Oops! You have to draw a card you can't play. ");
-                    Card drawnCard = deck.draw();
-                    currentPlayer.drawCard(drawnCard);
-                    System.out.println();
-                    System.out.println(currentPlayer.getPlayerName() + " draws a card: " + drawnCard);
-                    currentPlayer = nextPlayer;
-                    currentHand = currentPlayer.getHand();
-
-                }
-                int inputIndex = -1;  // Initialize inputIndex to -1
-                if (!playableCards.isEmpty()) {
-                    playableCards = currentHand.getPlayableCards(currentCard, chosenColor);
-                    System.out.println(currentPlayer.getPlayerName() + "'s Hand: " + currentHand);
-                    System.out.print(currentPlayer.getPlayerName() + " Playable cards are: " + playableCards);
-                    System.out.println();
-                    System.out.println(currentPlayer.getPlayerName() + " Enter the index of the card to play (0-" + (playableCards.size() - 1) + "). To draw a card, enter -1.");
-                    System.out.println();
-                    boolean validInput = false;
-                    while (!validInput) {
-                        try {
-                            inputIndex = scanner.nextInt();
-                            scanner.nextLine(); // Consume the newline character
-                            if (inputIndex >= -1 && inputIndex < playableCards.size()) {
-                                validInput = true;
-                            } else {
-                                System.out.println("Invalid Input");
-                                System.out.println(currentPlayer.getPlayerName() + " Enter the index of the card to play (0-" + (playableCards.size() - 1) + "). To draw a card, enter -1.");
-                            }
-                        } catch (InputMismatchException e) {
-                            System.out.println("Invalid input");
-                            System.out.println(currentPlayer.getPlayerName() + " Enter the index of the card to play (0-" + (playableCards.size() - 1) + "). To draw a card, enter -1.");
-                            scanner.next();
-                        }
-                    }
-
-                }
-                if (inputIndex == -1) {
-                    // The player chose to draw a card
-                    Card drawncard = deck.draw();
-                    currentPlayer.drawCard(drawncard);
-                    System.out.println();
-                    System.out.println(currentPlayer.getPlayerName() + " draws a card: " + drawncard);
-
-                }
-
-                //int inputIndex = scanner.nextInt();
-                if (inputIndex >= 0 && inputIndex < playableCards.size()) {
-                    Card cardPlayed = playableCards.get(inputIndex);
-                    if (cardPlayed.getCardType() == Card.CardType.WILD) {
-                        System.out.println(currentPlayer.getPlayerName() + " plays " + cardPlayed);
-                        currentPlayer.playCard(cardPlayed);
-                        System.out.print(currentPlayer.getPlayerName() + ", choose the color to continue play:\n");
-                        System.out.println("Enter 1 for Blue, Enter 2 for Green, Enter 3 for Red, Enter 4 for Yellow");
-
-                        int chooseColour = 0;
-                        boolean validInput = false;
-                        while (!validInput) {
-                            try {
-                                chooseColour = scanner.nextInt();
-                                if (chooseColour >= 1 && chooseColour <= 4) {
-                                    validInput = true;
-                                } else {
-                                    System.out.println("Invalid color choice. Please choose a valid color.");
-                                    System.out.println("Enter 1 for Blue, Enter 2 for Green, Enter 3 for Red, Enter 4 for Yellow");
-                                }
-                            } catch (InputMismatchException e) {
-                                System.out.println("Invalid color choice. Please choose a valid color.");
-                                System.out.println("Enter 1 for Blue, Enter 2 for Green, Enter 3 for Red, Enter 4 for Yellow");
-                                scanner.next();
-                            }
-                        }
-                        chosenColor = Card.Colour.values()[chooseColour - 1];
-                        currentCard = cardPlayed;
-                        currentCard.setColour(chosenColor);
-                        System.out.println(currentPlayer.getPlayerName() + " has chosen the color: " + chosenColor);
-                    }
-                    //Bonus
-                    if (cardPlayed.getCardType() == Card.CardType.WILD_DRAW_TWO) {
-                        if (direction == Direction.FORWARD) {
-                            System.out.println(currentPlayer.getPlayerName() + " plays " + cardPlayed);
-                            currentPlayer.playCard(cardPlayed);
-                            currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
-                            currentPlayer = players.get(currentPlayerIndex);
-                            System.out.print(currentPlayer.getPlayerName() + ", Oops! You have to draw a card you can't play. ");
-                            //Draw one card for the next player
-                            UnoPlayer nextPlayer = players.get(currentPlayerIndex);
-                            Card drawnCard = deck.draw();
-                            Card drawnCard2 = deck.draw();
-                            nextPlayer.drawCard(drawnCard);
-                            nextPlayer.drawCard(drawnCard2);
-                            System.out.println();
-                            System.out.println(nextPlayer.getPlayerName() + " draws cards: " + drawnCard + " and " + drawnCard2);
-                            currentPlayer.playCard(cardPlayed);
-                            System.out.print("Player who played WILD CARD 2 choose the color to continue play:\n");
-                            System.out.println("Enter 1 for Blue, Enter 2 for Green, Enter 3 for Red, Enter 4 for Yellow");
-
-                            int chooseColour = 0;
-                            boolean validInput = false;
-                            while (!validInput) {
-                                try {
-                                    chooseColour = scanner.nextInt();
-                                    if (chooseColour >= 1 && chooseColour <= 4) {
-                                        validInput = true;
-                                    } else {
-                                        System.out.println("Invalid color choice. Please choose a valid color.");
-                                        System.out.println("Enter 1 for Blue, Enter 2 for Green, Enter 3 for Red, Enter 4 for Yellow");
-                                    }
-                                } catch (InputMismatchException e) {
-                                    System.out.println("Invalid color choice. Please choose a valid color.");
-                                    System.out.println("Enter 1 for Blue, Enter 2 for Green, Enter 3 for Red, Enter 4 for Yellow");
-                                    scanner.next();
-                                }
-                            }
-                            chosenColor = Card.Colour.values()[chooseColour - 1];
-                            currentCard = cardPlayed;
-                            currentCard.setColour(chosenColor);
-                            System.out.println(currentPlayer.getPlayerName() + " has chosen the color: " + chosenColor);
-
-                        } else {
-                            System.out.println(currentPlayer.getPlayerName() + " plays " + cardPlayed);
-                            currentPlayer.playCard(cardPlayed);
-                            if (currentPlayerIndex == 0) {
-                                currentPlayerIndex = players.size() - 1; // Wrap around to the last player
-                            } else {
-                                currentPlayerIndex = (currentPlayerIndex - 1) % players.size();
-                            }
-                            currentPlayer = players.get(currentPlayerIndex);
-                            System.out.print(currentPlayer.getPlayerName() + ", Oops! You have to draw a card you can't play. ");
-                            //Draw one card for the next player
-                            UnoPlayer nextPlayer = players.get(currentPlayerIndex);
-                            Card drawnCard = deck.draw();
-                            nextPlayer.drawCard(drawnCard);
-                            System.out.println();
-                            System.out.println(nextPlayer.getPlayerName() + " draws a card: " + drawnCard);
-                            currentPlayer.playCard(cardPlayed);
-                            System.out.print("Player who played WILD CARD 2 choose the color to continue play:\n");
-                            System.out.println("Enter 1 for Blue, Enter 2 for Green, Enter 3 for Red, Enter 4 for Yellow");
-
-                            int chooseColour = 0;
-                            boolean validInput = false;
-                            while (!validInput) {
-                                try {
-                                    chooseColour = scanner.nextInt();
-                                    if (chooseColour >= 1 && chooseColour <= 4) {
-                                        validInput = true;
-                                    } else {
-                                        System.out.println("Invalid color choice. Please choose a valid color.");
-                                        System.out.println("Enter 1 for Blue, Enter 2 for Green, Enter 3 for Red, Enter 4 for Yellow");
-                                    }
-                                } catch (InputMismatchException e) {
-                                    System.out.println("Invalid color choice. Please choose a valid color.");
-                                    System.out.println("Enter 1 for Blue, Enter 2 for Green, Enter 3 for Red, Enter 4 for Yellow");
-                                    scanner.next();
-                                }
-                            }
-                            chosenColor = Card.Colour.values()[chooseColour - 1];
-                            currentCard = cardPlayed;
-                            currentCard.setColour(chosenColor);
-                            System.out.println(currentPlayer.getPlayerName() + " has chosen the color: " + chosenColor);
-                        }
-
-                    } else {
-                        System.out.println(currentPlayer.getPlayerName() + " plays " + cardPlayed);
-                        currentCard = cardPlayed;
-                        currentPlayer.playCard(cardPlayed);
-                    }
-
-                } else {
-                    if(inputIndex!=-1 ) {
-                        System.out.println("Invalid index. Please enter a valid card index.");
-                        int index = scanner.nextInt();
-                        Card cardPlayed = playableCards.get(index);
-                        System.out.println(currentPlayer.getPlayerName() + " plays " + cardPlayed);
-                        currentPlayer.playCard(cardPlayed);
-                        currentCard = cardPlayed;
-                    }
-                }
-            } else {
-
-                if (direction == Direction.FORWARD) {
-                    noPlayableDrawCards(currentPlayer);
-                    currentPlayer = players.get(currentPlayerIndex);
-                } else {
-                    noPlayableDrawCards(currentPlayer);
-                    currentPlayer = players.get((currentPlayerIndex - 1 + players.size()) % players.size());
-                }
-
-            }
-            if (deck.isEmpty()) {
-                deck.reAdd();
-            }
-            if (currentPlayer.hasUno()) {
-                System.out.println(currentPlayer.getPlayerName() + " declares UNO!");
-            }
-            if (currentPlayer.emptyHand()) {
-                int opponentScore = calculateScore();
-                scores.put(currentPlayer.getPlayerName(), scores.get(currentPlayer.getPlayerName()) + opponentScore);
-                for (UnoPlayer player : players) {
-                    if ((scores.get(player.getPlayerName())) >= 500) {
-                        System.out.println(currentPlayer.getPlayerName() + " wins the game!");
-                        unoGameWon = true;
-                    } else {
-                        for (UnoPlayer pl : players) {
-                            pl.resetHand();
-                        }
-                        deck.giveDeck();
-                        deck.shuffle();
-                        roundNumber++;
-                        currentPlayerIndex=0;
-                        for (UnoPlayer pl : players) { //Start a new round with 7 new cards
-                            for (int i = 0; i < 7; i++) {
-                                Card drawnCard = deck.draw();
-                                pl.drawCard(drawnCard);
-                            }
-                        }
-                        play();
-                    }
-
-                }
-            }
-            //To add to the deck discard pile
-            if (deck.isEmpty()) {
-                deck.reAdd();
-            }
-
-            if (currentCard.getCardType() == Card.CardType.REVERSE) {
-                reverseDirection();
-                System.out.print("The direction has been reversed. The game is now " + direction + " ");
-                System.out.println();
-            }
-
-            if (direction == Direction.FORWARD) {
-                currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
-
-            } else {
-                currentPlayerIndex = (currentPlayerIndex - 1 + players.size()) % players.size();
-            }
-
-        }
-
-    }
-
 }
-

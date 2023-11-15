@@ -4,9 +4,7 @@ public class Hand {
     private ArrayList<Card> cards;
 
 
-    public Hand() {
-        cards = new ArrayList<Card>() ;
-    }
+    public Hand() { cards = new ArrayList<Card>();}
 
 
     public void addCard(Card card){

@@ -108,20 +108,16 @@ public class Card {
         return str;
     }
     public Colour getColour() {
-
         return colour;
     }
 
     public CardType getCardType() {
-
         return cardT;
     }
     public Number getNumber(){
-
         return num;
     }
     public void setColour(Colour colour) {
-
         this.colour = colour;
     }
     public int Scoring(){

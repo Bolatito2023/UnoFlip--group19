@@ -5,262 +5,271 @@ import java.util.List;
 import java.awt.*;
 
 public class UnoFlipModelViewFrame extends JFrame implements UnoFlipModelView {
+    private JButton drawButton;
+    private JButton nextPlayerButton;
+    private JPanel playerHandPanel;
+    private JLabel topCardLabel;
+    private JLabel currentPlayerLabel;
+    private UnoFlipModel gameModel;
+    private UnoPlayer currentPlayer;
+    private JPanel messagesPanel;
+    private JTextArea messagesTextArea;
+    private JLabel imageLabel;
 
-    //JButton[][] buttons;
-    UnoFlipModel model;
-    ArrayList<JButton> cardButtons;
-    private static List<UnoPlayer> player;
     private Deck deck;
-    private JPanel panel;
-    private JRadioButton [] wildCardColors;
-    private ButtonGroup buttonGroup;
-    private  int currentPlayerIndex;
-    private UnoFlipModel game;
-    private JTextArea southTextArea;
-    private JScrollPane scrollPane;
-    private UnoFlipModel.Direction direction;
-    private JPanel southPanel;
-    private JPanel buttonPanel;
-    private Card card;
-    private Hand usersHand;
-    private JButton centerButton;
 
-    UnoFlipEvent event;
-    public UnoFlipModelViewFrame() {
-        super("UNO FLIP!");
-        deck = new Deck();
+    public UnoFlipModelViewFrame(UnoFlipModel game) {
+        gameModel = game;
+        setTitle("Uno Game");
+        setSize(800, 600);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+
+        // Create a split pane for the upper and lower halves
+        JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+        splitPane.setResizeWeight(0.5); // Equal resizing for upper and lower halves
+
+        // Upper half panel
+        JPanel upperHalfPanel = new JPanel(new BorderLayout());
+
+        // Current player label (upper half, left)
+        JPanel currentPlayerPanel = new JPanel();
+        currentPlayerLabel = new JLabel();
+        currentPlayerPanel.add(currentPlayerLabel);
+        upperHalfPanel.add(currentPlayerPanel, BorderLayout.WEST);
+
+        // Top card display (upper half, center)
+        JPanel topCardPanel = new JPanel();
+        topCardLabel = new JLabel();
+        topCardPanel.add(topCardLabel);
+        upperHalfPanel.add(topCardPanel, BorderLayout.CENTER);
+
+        // Add the upper half panel to the split pane
+        splitPane.setTopComponent(upperHalfPanel);
+
+        JPanel lowerHalfPanel = new JPanel(new BorderLayout());
+
+        // Player hand panel
+        playerHandPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JScrollPane scrollPane = new JScrollPane(playerHandPanel);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+        lowerHalfPanel.add(scrollPane, BorderLayout.CENTER);
+
+        // Messages panel (lower half, left)
+        messagesPanel = new JPanel(new BorderLayout());
+        messagesTextArea = new JTextArea(10, 20); // You can customize the size
+        JScrollPane messagesScrollPane = new JScrollPane(messagesTextArea);
+        messagesPanel.add(messagesScrollPane, BorderLayout.CENTER);
+        lowerHalfPanel.add(messagesPanel, BorderLayout.WEST);
+        imageLabel = null;
+
+        // Action buttons panel
+        JPanel actionPanel = new JPanel(new FlowLayout());
+        drawButton = new JButton("Draw Card");
+        drawButton.addActionListener(new UnoFlipController(gameModel, this));
+        actionPanel.add(drawButton);
+
+
+        nextPlayerButton = new JButton("Next Player");
+        nextPlayerButton.setEnabled(false);
+        nextPlayerButton.addActionListener(new UnoFlipController(gameModel, this));
+        actionPanel.add(nextPlayerButton);
+
+        lowerHalfPanel.add(actionPanel, BorderLayout.SOUTH);
+
+        // Add the lower half panel to the split pane
+        splitPane.setBottomComponent(lowerHalfPanel);
+
+        // Add the main panel to the frame
+        add(splitPane);
+        // Add this view to the uno game model
+        gameModel.addView(this);
+
+        update();
+    }
+    public void nextPlayerButton(Boolean bool){
+        this.nextPlayerButton.setEnabled(bool);
+    }
+
+    public void drawCardButton(Boolean bool){
+        this.drawButton.setEnabled(bool);
+    }
+
+    public void cardButtons(Boolean bool){
+        Component[] components = playerHandPanel.getComponents();
+        for (Component component: components) {
+            if (component instanceof JButton) {
+
+                JButton button = (JButton) component;
+                button.setEnabled(bool);
+            }
+        }
+    }
+
+    // Update the view components as necessary
+    public void update(){
+        // update the panel with player cards
+        updatePlayerHandPanel();
+        // update the panel with top card
+        updateTopCardDisplay();
+        // Update the current player label
+        updateCurrentPlayerDisplay();
+
+    }
+
+
+    public void updatePlayerHandPanel() {
+        playerHandPanel.removeAll(); // Clear the existing cards (buttons)
+
+        // Get the current player's hand
+        Hand currentHand = gameModel.getCurrentPlayer().getHand();
+
+        for (Card card : currentHand.getCards()) {
+            System.out.println(card.toString());
+            // For each card, create a button and set the text to the card's string representation
+            JButton cardButton = new JButton(card.toString());
+
+            //Get Image Path for each card's button
+            ImageIcon cardImage = loadImagePath(card);
+            cardImage.setImage(cardImage.getImage().getScaledInstance(80, 160, Image.SCALE_SMOOTH));
+            cardButton.setIcon(cardImage);
+
+            cardButton.setLayout(new BoxLayout(cardButton, BoxLayout.Y_AXIS));
+
+            JLabel cardLabel = new JLabel(card.toString(), SwingConstants.CENTER);
+            cardButton.add(cardLabel);
+
+            cardButton.setPreferredSize(new Dimension(120, 150));
+            cardButton.addActionListener(new UnoFlipController(gameModel, this));
+
+            // Add the button to the player hand panel
+            playerHandPanel.add(cardButton);
+        }
+
+        // Refresh the panel to show the updated hand
+        playerHandPanel.revalidate();
+        playerHandPanel.repaint();
+    }
+
+    private void updateTopCardDisplay() {
+        Card topCard = gameModel.getTopCard();
+        ImageIcon topCardImage = loadImagePath(topCard);
+
+        // Check if the image was successfully loaded
+        if (topCardImage.getImageLoadStatus() == MediaTracker.COMPLETE) {
+            topCardLabel.setIcon(topCardImage);
+        } else {
+            // Handle image loading failure
+            topCardLabel.setIcon(null);
+            topCardLabel.setText("Image not found");
+        }
+        String cardText = topCard.toString();
+        topCardLabel.setText(cardText);
+
+    }
+
+    public void updateMessages(String message) {
+        messagesTextArea.setText("");
+        messagesTextArea.append(message + "\n");
+        if (imageLabel != null) {
+            messagesPanel.remove(imageLabel);
+            messagesPanel.revalidate();
+            messagesPanel.repaint();
+        }
+    }
+
+    public void updateDrawCardMessagePanel(String message, Card drawnCard) {
+        messagesTextArea.setText("");
+        messagesTextArea.append(message + "\n");
+
+        if (drawnCard != null) {
+            // Assuming you have a JLabel to display the image
+            ImageIcon cardImage = loadImagePath(drawnCard);
+            imageLabel = new JLabel(cardImage);
+
+            // Add the image to the messages panel
+            messagesPanel.add(imageLabel, BorderLayout.NORTH);
+            messagesPanel.revalidate();
+            messagesPanel.repaint();
+        }
+    }
+
+    private void updateCurrentPlayerDisplay(){
+
+        currentPlayer = gameModel.getCurrentPlayer();
+        currentPlayerLabel.setText("Current Player: " + currentPlayer.getPlayerName());
+    }
+    protected ImageIcon loadImagePath(Card card) {
+        String imagePath;
+
+        if (card.getCardType() == Card.CardType.WILD || card.getCardType() == Card.CardType.WILD_DRAW_TWO) {
+            imagePath = "unoCards/" + card.getCardType().toString().toLowerCase() + "/" + card.getCardType().toString().toLowerCase() + ".png";
+            //System.out.println("Image Path: " + imagePath);
+        }
+        else if (card.getCardType() == Card.CardType.REVERSE) {
+            imagePath = "unoCards/" + card.getCardType().toString().toLowerCase() + "/" + card.getColour().toString().toLowerCase() + card.getCardType().toString().toLowerCase() + ".png";
+            //System.out.println("Image Path: " + imagePath);
+        }
+        else if (card.getCardType() == Card.CardType.SKIP) {
+            imagePath = "unoCards/" + card.getCardType().toString().toLowerCase() + "/" + card.getColour().toString().toLowerCase() + card.getCardType().toString().toLowerCase() + ".png";
+            //System.out.println("Image Path: " + imagePath);
+        }
+        else if (card.getCardType() == Card.CardType.DRAW_ONE) {
+            imagePath = "unoCards/" + card.getCardType().toString().toLowerCase() + "/" + card.getColour().toString().toLowerCase() + card.getCardType().toString().toLowerCase() + ".png";
+            //System.out.println("Image Path: " + imagePath);
+        }
+        else if (card.getCardType() == Card.CardType.NUMBER) {
+            imagePath = "unoCards/" + card.getColour().toString().toLowerCase() + "/" + card.getColour().toString().toLowerCase() + card.getNumber().toString().toLowerCase() + ".png";
+            System.out.println("Image Path: " + imagePath);
+        }
+        else{imagePath = "unoCards/Unknown/blank.png";}
+
+        ImageIcon CardImage = new ImageIcon(imagePath);
+
+        return CardImage;
+    }
+
+    // Main method to start the game GUI
+    public static void main(String[] args) {
+        // Show input dialog to get the number of players
+        String numPlayersStr = JOptionPane.showInputDialog(null,
+                "How many players? (2-4)",
+                "Number of Players",
+                JOptionPane.QUESTION_MESSAGE);
+        int numPlayers = 0;
+
+        // Validate and parse the input
+        try {
+            numPlayers = Integer.parseInt(numPlayersStr);
+            if (numPlayers < 2 || numPlayers > 4) {
+                JOptionPane.showMessageDialog(null,
+                        "Please choose a number between 2 and 4.",
+                        "Invalid Number",
+                        JOptionPane.ERROR_MESSAGE);
+                System.exit(0); // Exit or repeat the process
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(null,
+                    "Invalid input. Please enter a number.",
+                    "Invalid Input",
+                    JOptionPane.ERROR_MESSAGE);
+            System.exit(0); // Exit or repeat the process
+        }
+
+        // Start the game with new deck and the specified number of players
+        Deck deck = new Deck();
         deck.giveDeck();
         deck.shuffle();
+        //System.out.println(deck.draw().toString());
 
-        //card = new Card();
-        usersHand = new Hand();
-
-        player = new ArrayList<UnoPlayer>();
-        model = new UnoFlipModel(player,deck);
-        model.addUnoFlipView(this);
-        direction= UnoFlipModel.Direction.FORWARD;
-        event = new UnoFlipEvent(model,direction);
-        cardButtons = new ArrayList<JButton>();
+        UnoFlipModel unoGame = new UnoFlipModel(numPlayers, deck);
+        // Ideally, pass unoGame to the view
+        UnoFlipModelViewFrame view = new UnoFlipModelViewFrame(unoGame);
+        view.setVisible(true);
 
 
-        //currentPlayerIndex=0;
-
-        //Ask User for number of players
-        int numberOfPlayers = Integer.parseInt(JOptionPane.showInputDialog("Please enter a number between from 2 to 4:"));
-        boolean validInput = false;
-        while (!validInput) {
-            try{
-
-                if (numberOfPlayers>=2&&numberOfPlayers<=4) {
-                    validInput = true;
-                } else {
-                    numberOfPlayers = Integer.parseInt(JOptionPane.showInputDialog("Please enter a number between from 2 to 4:"));
-                }
-            }catch (InputMismatchException e) {
-                numberOfPlayers = Integer.parseInt(JOptionPane.showInputDialog("Invalid input. Please enter a number between 2 and 4:"));
-            }
-        }
-
-        for (int i = 1; i <= numberOfPlayers; i++) {
-            String playerName = JOptionPane.showInputDialog("Enter player " + i + "'s name:");
-            player.add(new UnoPlayer(playerName,deck));
-        }
-
-        // Set the layout manager for the JFrame
-        this.setLayout(new BorderLayout());
+        // Start the game logic if needed
+        unoGame.play();
 
 
-        // Create and add components to the frame
-        JButton drawCardButton = new JButton("Draw Card");
-
-        panel = new JPanel();
-        panel.setLayout(new FlowLayout(FlowLayout.LEFT));
-        JLabel yourWildCard = new JLabel ("(Used for Wild card types) Choose a color to be played:");
-        panel.add(yourWildCard);
-        wildCardColors = new JRadioButton[4];
-        buttonGroup = new ButtonGroup();
-        String [] wildLabels = {"Red", "Blue", "Yellow", "Green"};
-        for (int i=0; i<4; i++) {
-            wildCardColors[i] = new JRadioButton (wildLabels[i]);
-            wildCardColors[i].setActionCommand (wildLabels[i].substring(0, 1));
-            buttonGroup.add(wildCardColors[i]);
-            panel.add(wildCardColors[i]);
-        }
-        // Create a panel for the SOUTH region
-        southPanel = new JPanel(new BorderLayout());
-
-        UnoPlayer currentPlayer = model.getCurrentPlayer();
-
-        southTextArea = new JTextArea("Player " + currentPlayer.getPlayerName() +"'s Turn");
-        southTextArea.setEditable(false);
-        centerButton = new JButton("Current Card on Discard Pile");
-        centerButton.setHorizontalAlignment(SwingConstants.CENTER);
-        JButton nextPlayerButton = new JButton("Next Player");
-
-
-        // Create a text area for player's cards
-        southPanel.add(southTextArea, BorderLayout.CENTER);
-
-        // Create a panel for buttons
-        buttonPanel = new JPanel();
-        scrollPane = new JScrollPane(buttonPanel);
-        southPanel.add(scrollPane, BorderLayout.SOUTH);
-
-        initializeButtonHand();
-
-
-        this.add(drawCardButton, BorderLayout.EAST);
-        this.add(panel, BorderLayout.WEST);
-        this.add(southPanel, BorderLayout.SOUTH);
-        this.add(centerButton, BorderLayout.CENTER);
-        this.add(nextPlayerButton, BorderLayout.NORTH);
-
-        // Set the frame size, default close operation, and make it visible
-        this.setSize(800, 800); // Adjust the size as needed
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        //Adding the button listeners for buttons created
-
-        DrawButtonListener listener1 = new DrawButtonListener(model,event,this);
-        drawCardButton.addActionListener(listener1);
-
-        NextPlayerButtonListener listener = new NextPlayerButtonListener(model,event,this);
-        nextPlayerButton.addActionListener(listener);
-
-
-
-        PlayCardButtonListener listener2 = new PlayCardButtonListener(model,event,this);
-        for(JButton button:cardButtons){
-            button.addActionListener(listener2);
-        }
-
-        this.setVisible(true);
-
-
-
-    }
-
-    /** Update the south text area to show which players turn is it
-     *
-     */
-
-    public void updateSouthTextArea(UnoFlipEvent e ) {
-        String text = "Player " + e.getPlayer().getPlayerName() + "'s Turn";
-        southTextArea.setText(text);
-    }
-    public void updateCentre(UnoFlipEvent e){
-        //centerButton.setText();
-    }
-    /**public void initiliazeDiscardPile(){
-
-     centerButton.setText("DISCARD PILE \n" + game.getTopCard() +" ");
-
-     }*/
-
-    /**
-     * This method updates a player button when they draw cards or play cards.
-     */
-    public void updateCards(){
-        UnoPlayer player = model.getCurrentPlayer();
-
-        // Get the player's hand
-        Hand playerHand = player.getHand();
-
-
-        // Create lists for the current buttons and the new buttons
-        ArrayList<JButton> currentCardButtons = new ArrayList<>(cardButtons);
-        ArrayList<JButton> newCardButtons = new ArrayList<>();
-
-        // Update the display of cards in the player's hand
-        for (Card card : playerHand.getCards()) {
-            JButton cardButton = createCardButton(card); // Create a button for the card
-            newCardButtons.add(cardButton);
-        }
-
-        // Remove buttons for cards that were played
-        for (JButton button : currentCardButtons) {
-            if (!newCardButtons.contains(button)) {
-                buttonPanel.remove(button);
-            }
-        }
-
-        // Add buttons for cards that were drawn
-        for (JButton button : newCardButtons) {
-            if (!currentCardButtons.contains(button)) {
-                buttonPanel.add(button);
-            }
-        }
-
-        // Update the cardButtons list with the new buttons
-        cardButtons = newCardButtons;
-
-    }
-
-    /**This method creates a button for a card.
-     * */
-
-    public JButton createCardButton(Card card) {
-        JButton cardButton = new JButton();
-
-        // Set the button's text to display the card's information (e.g., color and value)
-        if (card.getCardType() == Card.CardType.NUMBER){
-            cardButton.setText(card.getColour() + "\n " + card.getNumberAsWord());
-        }
-        else{
-            cardButton.setText(card.getColour() + "\n " + card.getCardType());
-        }
-        cardButton.setPreferredSize(new Dimension(100, 150));
-        Font buttonFont = new Font("Arial", Font.PLAIN, 9);
-        cardButton.setFont(buttonFont);
-        return cardButton;
-
-    }
-
-    /**This method initializes a button of 7 cards for each player.
-     *
-     */
-
-    public void initializeButtonHand() {
-        // Initialize the game; each player gets 7 cards
-        game = new UnoFlipModel(player, deck);
-
-        for (UnoPlayer currentPlayer : player) {
-            Hand usersHand = currentPlayer.getHand();
-            ArrayList<Card> usersCards = usersHand.getCards();
-
-            for (int i = 0; i < usersCards.size(); i++) {
-                JButton b = new JButton();
-                if(usersCards.get(i).getCardType()==Card.CardType.NUMBER) {
-                    b.setText(usersCards.get(i).getColour() + "\n " + usersCards.get(i).getNumberAsWord());
-                }
-                else{
-                    b.setText(usersCards.get(i).getColour() + "\n " + usersCards.get(i).getCardType());
-                }
-
-                b.addActionListener(new PlayCardButtonListener(model, event, this));
-                buttonPanel.add(b);
-                cardButtons.add(b);
-                updateCards();
-            }
-        }
-
-
-
-    }
-
-
-
-
-
-    /** Get the buttons representing the cards of the users.
-     **/
-    public ArrayList<JButton> getCardButtons () {
-        return cardButtons;
-    }
-
-
-    public static void main(String[] args) {
-
-        new UnoFlipModelViewFrame();
     }
 }

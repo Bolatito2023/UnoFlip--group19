@@ -35,7 +35,7 @@ public class Deck {
     public void giveDeck(){
         deck.clear();
 
-        Card.CardType[] cards = {Card.CardType.SKIP, Card.CardType.REVERSE, Card.CardType.DRAW_ONE, Card.CardType.FLIP,};
+        Card.CardType[] cards = {Card.CardType.SKIP, Card.CardType.REVERSE, Card.CardType.DRAW_ONE}; //Card.CardType.FLIP not implemented yet
         Card.Colour[] colors = {Card.Colour.BLUE, Card.Colour.GREEN, Card.Colour.RED, Card.Colour.YELLOW};
         Card.Number[] num = {Card.Number.ONE, Card.Number.TWO, Card.Number.THREE, Card.Number.FOUR,Card.Number.FIVE,Card.Number.SIX,Card.Number.SEVEN,Card.Number.EIGHT, Card.Number.NINE};
 
