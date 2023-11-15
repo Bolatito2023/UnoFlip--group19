@@ -5,7 +5,7 @@ public class Deck {
     private ArrayList<Card> discardedCards;
 
     /**
-     * The number of non_zero cards .
+     * The number of non_zero cards.
      */
     public static final int NUMBER_OF_REG_CARDS_EACH = 2;
 
@@ -25,13 +25,17 @@ public class Deck {
      */
     public static final int NUMBER_OF_WILD_D2_CARDS = 4;
 
-
+    /**
+     * Creates a deck of cards as an ArrayList for the game.
+     */
     public Deck(){
         deck = new ArrayList<Card>();
         discardedCards = new ArrayList<Card>();
     }
 
-
+    /**
+     * Clears the current deck and adds all cards to the deck.
+     */
     public void giveDeck(){
         deck.clear();
 
@@ -61,17 +65,32 @@ public class Deck {
             deck.add(new Card(Card.Colour.NONE,Card.CardType.WILD_DRAW_TWO ));
         }
     }
+    /**
+     * Shuffles the order of cards in the deck.
+     */
     public void shuffle(){
 
         Collections.shuffle(deck);
     }
 
+    /**
+     * Returns the cards in the deck.
+     * @return deck the ArrayList of cards in the deck.
+     */
     public ArrayList<Card> getDeck(){
         return deck;
     }
+
+    /**
+     * Returns all the discarded cards.
+     */
     public ArrayList<Card> getDiscardedCards(){
         return discardedCards;
     }
+
+    /**
+     * Checks if deck is empty.
+     */
     public boolean isEmpty() {
         return deck.isEmpty();
     }
@@ -88,6 +107,7 @@ public class Deck {
             return deck.remove(0);
         }
     }
+
     /**
      * Discard the Card object passed so that it is out of play until a
      * remix operation.
@@ -97,7 +117,7 @@ public class Deck {
     }
 
     /**
-     * re shuffle all the cards into the deck by adding all previously discarded cards back into
+     * Re shuffle all the cards into the deck by adding all previously discarded cards back into
      * the deck, and shuffling in case the deck pile has finished and game is not over.
      */
     public void reAdd() {
