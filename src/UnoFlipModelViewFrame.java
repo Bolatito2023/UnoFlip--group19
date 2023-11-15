@@ -22,40 +22,31 @@ public class UnoFlipModelViewFrame extends JFrame {
     public UnoFlipModelViewFrame(UnoFlipModel game) {
         gameModel = game;
         setTitle("Uno Game");
-        setSize(1280, 800);
+        setSize(800, 600);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
-        // Create a split pane for the upper and lower halves
         JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-        splitPane.setResizeWeight(0.5); // Equal resizing for upper and lower halves
-
-        // Upper half panel
+        splitPane.setResizeWeight(0.5);
         JPanel upperHalfPanel = new JPanel(new BorderLayout());
-
-        // Current player label (upper half, left)
         JPanel currentPlayerPanel = new JPanel();
         currentPlayerLabel = new JLabel();
         currentPlayerPanel.add(currentPlayerLabel);
         upperHalfPanel.add(currentPlayerPanel, BorderLayout.WEST);
 
-        // Top card display (upper half, center)
         JPanel topCardPanel = new JPanel();
         topCardLabel = new JLabel();
         topCardPanel.add(topCardLabel);
         upperHalfPanel.add(topCardPanel, BorderLayout.CENTER);
 
-        // Add the upper half panel to the split pane
         splitPane.setTopComponent(upperHalfPanel);
 
         JPanel lowerHalfPanel = new JPanel(new BorderLayout());
-
-        // Player hand panel
         playerHandPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JScrollPane scrollPane = new JScrollPane(playerHandPanel);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
         lowerHalfPanel.add(scrollPane, BorderLayout.CENTER);
         messagesPanel = new JPanel(new BorderLayout());
-        messagesTextArea = new JTextArea(10, 20);
+        messagesTextArea = new JTextArea(10, 30);
         JScrollPane messagesScrollPane = new JScrollPane(messagesTextArea);
         messagesPanel.add(messagesScrollPane, BorderLayout.CENTER);
         lowerHalfPanel.add(messagesPanel, BorderLayout.WEST);
@@ -88,7 +79,6 @@ public class UnoFlipModelViewFrame extends JFrame {
         Component[] components = playerHandPanel.getComponents();
         for (Component component: components) {
             if (component instanceof JButton) {
-
                 JButton button = (JButton) component;
                 button.setEnabled(bool);
             }
@@ -115,20 +105,16 @@ public class UnoFlipModelViewFrame extends JFrame {
 
         for (Card card : currentHand.getCards()) {
             System.out.println(card.toString());
-            // For each card, create a button and set the text to the card's string representation
             JButton cardButton = new JButton(card.toString());
-
-            //Get Image Path for each card's button
             ImageIcon cardImage = loadImagePath(card);
-            cardImage.setImage(cardImage.getImage().getScaledInstance(80, 160, Image.SCALE_SMOOTH));
+            cardImage.setImage(cardImage.getImage().getScaledInstance(110, 200, Image.SCALE_SMOOTH));
             cardButton.setIcon(cardImage);
 
             cardButton.setLayout(new BoxLayout(cardButton, BoxLayout.Y_AXIS));
 
             JLabel cardLabel = new JLabel(card.toString(), SwingConstants.CENTER);
             cardButton.add(cardLabel);
-
-            cardButton.setPreferredSize(new Dimension(120, 150));
+            cardButton.setPreferredSize(new Dimension(150, 200));
             cardButton.addActionListener(new UnoFlipController(gameModel, this));
 
             // Add the button to the player hand panel
@@ -146,12 +132,11 @@ public class UnoFlipModelViewFrame extends JFrame {
     private void updateTopCardDisplay() {
         Card topCard = gameModel.getTopCard();
         ImageIcon topCardImage = loadImagePath(topCard);
+        topCardImage.setImage(topCardImage.getImage().getScaledInstance(200, 350, Image.SCALE_SMOOTH));
 
-        // Check if the image was successfully loaded
         if (topCardImage.getImageLoadStatus() == MediaTracker.COMPLETE) {
             topCardLabel.setIcon(topCardImage);
         } else {
-            // Handle image loading failure
             topCardLabel.setIcon(null);
             topCardLabel.setText("Image not found");
         }
