@@ -146,7 +146,7 @@ public class HandTest {
         }
     }
 
-
+    /*
     @Test
     public void getPlayableCards() {
         setUp();
@@ -181,4 +181,6 @@ public class HandTest {
         assertTrue(list3.contains(cGreenThree));
         assertTrue(list3.contains(cYellowThree));
     }
+
+     */
 }

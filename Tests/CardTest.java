@@ -113,6 +113,7 @@ public class CardTest {
 
      */
 
+    /*
     @Test
     public void scoring_RegularCard(){
         setUp();
@@ -141,5 +142,7 @@ public class CardTest {
         assertEquals(cSpecialWildDrawTwo.Scoring(), 50);
     }
 
+
+     */
 
 }

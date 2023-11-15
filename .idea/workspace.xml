@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="bed4e951-0f91-4b16-99dd-52d3a0ffa571" name="Changes" comment="added javadoc to Deck">
-      <change beforePath="$PROJECT_DIR$/src/UnoFlipModelViewFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/UnoFlipModelViewFrame.java" afterDir="false" />
-    </list>
+    <list default="true" id="bed4e951-0f91-4b16-99dd-52d3a0ffa571" name="Changes" comment="Resized components in UnoFlipModelViewFrame" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -185,7 +183,15 @@
       <option name="project" value="LOCAL" />
       <updated>1700021591019</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="Resized components in UnoFlipModelViewFrame">
+      <option name="closed" value="true" />
+      <created>1700023784082</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1700023784082</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -199,6 +205,7 @@
     <MESSAGE value="added javadoc to UnoFlipModel" />
     <MESSAGE value="added javadoc to UnoPlayer" />
     <MESSAGE value="added javadoc to Deck" />
-    <option name="LAST_COMMIT_MESSAGE" value="added javadoc to Deck" />
+    <MESSAGE value="Resized components in UnoFlipModelViewFrame" />
+    <option name="LAST_COMMIT_MESSAGE" value="Resized components in UnoFlipModelViewFrame" />
   </component>
 </project>
