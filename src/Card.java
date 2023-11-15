@@ -1,7 +1,7 @@
 /**
  * A (playing) card is a rank and a suit.
  *
- * @version 0.0
+ * @version 1.0
  */
 public class Card {
     public enum Colour {BLUE, GREEN, RED, YELLOW,NONE}
@@ -15,21 +15,33 @@ public class Card {
     private Colour colour;
     private CardType cardT;
     private Number num;
-    public Card(Colour color, CardType card ) {
-        this.colour = color;
+
+    /**
+     * Constructs a card with a colour and type.
+     * @param colour card colour.
+     * @param card card type.
+     */
+    public Card(Colour colour, CardType card ) {
+        this.colour = colour;
         this.cardT = card;
         //this.number = -1; //for non number cards
     }
-    public Card(Colour color, Number number) {
-        this.colour = color;
+
+    /**
+     * Constructs a card with a colour and number.
+     * @param colour card colour.
+     * @param number card type.
+     */
+    public Card(Colour colour, Number number) {
+        this.colour = colour;
         this.cardT = CardType.NUMBER;
         this.num = number;
     }
-    public Card(Colour color, CardType card, Number number) {
-        this.colour = color;
-        this.cardT = card;
-        this.num = number;
-    }
+
+    /**
+     * Returns a string representation of enum Number.
+     * @return string representation of Number.
+     */
     public String getNumberAsWord() {
         switch (num) {
             case ONE:
@@ -54,6 +66,11 @@ public class Card {
                 return "";
         }
     }
+
+    /**
+     * Returns a string representation of the Uno card.
+     * @return string representation of the Uno card.
+     */
     public String toString() {
         String str = "";
 
@@ -103,69 +120,40 @@ public class Card {
                 //break;
 
         }
-
-
         return str;
     }
+
+    /**
+     * Returns the card colour.
+     * @return card's colour.
+     */
     public Colour getColour() {
         return colour;
     }
 
+    /**
+     * Returns the card type.
+     * @return card's type.
+     */
     public CardType getCardType() {
         return cardT;
     }
+
+    /**
+     * Returns the card number.
+     * @return card's number.
+     */
     public Number getNumber(){
         return num;
     }
+
+    /**
+     * Sets the card colour.
+     * @param colour the card's colour.
+     */
     public void setColour(Colour colour) {
         this.colour = colour;
     }
-    public int Scoring(){
-        int total =0;
-        if (cardT == CardType.SKIP || cardT == CardType.REVERSE || cardT == CardType.FLIP) {
-            total+= 20;
-        }
-        if (cardT == CardType.WILD_DRAW_TWO ) {
-            total+= 50;
-        }
-        if (num == Number.ONE) {
-            total+= 1;
-        }
-        if (num == Number.TWO) {
-            total+= 2;
-        }
-        if (num == Number.THREE) {
-            total+= 3;
-        }
-        if (num == Number.FOUR) {
-            total+= 4;
-        }
-        if (num == Number.FIVE) {
-            total+= 5;
-        }
-        if (num == Number.SIX) {
-            total+= 6;
-        }
-        if (num == Number.SEVEN) {
-            total+= 7;
-        }
-        if (num == Number.EIGHT) {
-            total+= 8;
-        }
-        if (num == Number.NINE) {
-            total+= 9;
-        }
-        if (cardT == CardType.WILD) {
-            total+= 40;
-        }
-        if (cardT == CardType.DRAW_ONE) {
-            total+= 10;
-        }
-        //System.out.println("Illegal card!!");
-        //return -100;
-        return total;
-    }
-
 
 }
 
