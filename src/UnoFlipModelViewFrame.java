@@ -4,7 +4,7 @@ import java.util.InputMismatchException;
 import java.util.List;
 import java.awt.*;
 
-public class UnoFlipModelViewFrame extends JFrame implements UnoFlipModelView {
+public class UnoFlipModelViewFrame extends JFrame {
     private JButton drawButton;
     private JButton nextPlayerButton;
     private JPanel playerHandPanel;
