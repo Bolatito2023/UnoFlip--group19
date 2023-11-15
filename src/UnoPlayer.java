@@ -10,7 +10,11 @@ public class UnoPlayer {
     private boolean remindedUno;    // Indicates whether Uno reminder has been displayed
 
 
-    //Constructor
+    /**
+     * Constructs new player UnoPlayer.
+     * @param name the name of the player.
+     * @param deck the game's deck of cards.
+     */
     public UnoPlayer(String name, Deck deck) {
         this.playerName = name;
         this.hand = new Hand();
@@ -24,6 +28,10 @@ public class UnoPlayer {
         this.remindedUno = false; // Reminder is initially not displayed
     }
 
+    /**
+     * Plays a card from the player's hand.
+     * @param card the card to be played
+     */
     public void playCard(Card card){
         if (hand.contains(card)){
             hand.removeCard(card);
@@ -31,41 +39,58 @@ public class UnoPlayer {
         }
 
     }
+
+    /**
+     * Adds a card to the player's hand.
+     * @param card the card added to the player's hand.
+     */
     public void drawCard(Card card){
         hand.addCard(card);
     }
 
-
+    /**
+     * Returns player's hand.
+     * @return hand Arraylist of cards in player's hand.
+     */
     public Hand getHand(){
         return hand;
     }
 
+    /**
+     * Checks if player has Uno.
+     * @return True if the player has exactly one card, False otherwise.
+     */
     public boolean hasUno(){
         if(hand.handSize()!=1){
             return false;
         }
         return true;
     }
+
+    /**
+     * Checks if the player's hand is empty.
+     * @return True if the player has no cards in hand, otherwise False.
+     */
     public boolean emptyHand(){
 
         return hand.handEmpty();
     }
 
-    //reset player hands when starting game
+    /**
+     * Clear's cards in player's hand.
+     */
     public void resetHand() {
         hand.clear();
     }
 
+    /**
+     * Returns the player's name.
+     * @return playerName the player's name.
+     */
     public String getPlayerName(){
         return playerName;
     }
 
-    public int getScore() {
-        return score;
-    }
-    public void setScore(int score) {
-        this.score = score;
-    }
     public boolean getUnoCalled() {
         return unoCalled;
     }
@@ -82,6 +107,10 @@ public class UnoPlayer {
     public void setRemindedUno(boolean remindedUno) {
         this.remindedUno = remindedUno;
     }
+
+    /**
+     * Prints whether the player says UNO at the right time.
+     */
     public void sayUno() {
         if (hasUno()) {
             System.out.println(getPlayerName() + " says UNO!");
