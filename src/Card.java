@@ -69,7 +69,8 @@ public class Card {
 
     /**
      * Returns a string representation of the Uno card.
-     * @return string representation of the Uno card.
+     * @return string representation of the card colour, and type. If type is NUMBER, return a string
+     * representation of the number.
      */
     public String toString() {
         String str = "";
