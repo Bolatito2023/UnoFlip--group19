@@ -9,11 +9,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="bed4e951-0f91-4b16-99dd-52d3a0ffa571" name="Changes" comment="changed tests">
-      <change beforePath="$PROJECT_DIR$/.idea/artifacts/UnoFlip_game_jar2.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/artifacts/UnoFlip_game_jar2.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="bed4e951-0f91-4b16-99dd-52d3a0ffa571" name="Changes" comment="Added getters for dark colour and dark type in Card class, and updated isValidPlay in UnoFlipModel">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Card.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Card.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/UnoFlipModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/UnoFlipModel.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -209,8 +207,35 @@
       <option name="project" value="LOCAL" />
       <updated>1700023903820</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="Added dark side to Card class">
+      <option name="closed" value="true" />
+      <created>1700949684224</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1700949684224</updated>
+    </task>
+    <task id="LOCAL-00016" summary="Added getters for dark colour and dark type in Card class, and updated isValidPlay in UnoFlipModel">
+      <option name="closed" value="true" />
+      <created>1700951148620</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1700951148620</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Added Card class" />
@@ -225,6 +250,9 @@
     <MESSAGE value="added javadoc to Deck" />
     <MESSAGE value="Resized components in UnoFlipModelViewFrame" />
     <MESSAGE value="changed tests" />
-    <option name="LAST_COMMIT_MESSAGE" value="changed tests" />
+    <MESSAGE value="Added dark side to Card class" />
+    <MESSAGE value="Added getters for dark colour and type in Card class, and updated isValidPlay in UnoFlipModel" />
+    <MESSAGE value="Added getters for dark colour and dark type in Card class, and updated isValidPlay in UnoFlipModel" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added getters for dark colour and dark type in Card class, and updated isValidPlay in UnoFlipModel" />
   </component>
 </project>

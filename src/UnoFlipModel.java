@@ -144,11 +144,11 @@ public class UnoFlipModel {
     protected void handleDrawCard(UnoPlayer currentPlayer) {
         Card drawnCard = deck.draw();
         currentPlayer.drawCard(drawnCard);
-        view.updateDrawCardMessagePanel("Player " + currentPlayer.getPlayerName() + " drew a card: ", drawnCard);
+        view.updateDrawCardMessagePanel("Player " + currentPlayer.getPlayerName() + " drew card: ", drawnCard);
         view.nextPlayerButton(true);
         view.drawCardButton(false);
-        view.update();
         view.cardButtons(false);
+        view.update();
     }
 
     /**
@@ -201,14 +201,80 @@ public class UnoFlipModel {
         //System.out.println("Player " + currentPlayer.getName() + " plays: " + selectedCard.stringCard() + " color chosen: " + chosenColor);
         currentPlayer.playCard(selectedCard);
         currentCard = new Card(colour, Card.CardType.WILD);
-        System.out.println("handleWildCard is reached");
         view.nextPlayerButton(true);
         view.drawCardButton(false);
         view.cardButtons(false);
-        view.updateMessages(colour + " has been chosen. Player " + currentPlayerIndex + " has to draw place a " + colour + "colour card");
+        view.updateMessages(colour + " has been chosen.");
         view.update();
     }
 
+    public void handleFlipCard(UnoPlayer currentPlayer, Card selectedCard) {
+        side = !side;
+        currentPlayer.playCard(selectedCard);
+        currentCard = selectedCard;
+        view.nextPlayerButton(true);
+        view.drawCardButton(false);
+        view.cardButtons(false);
+        String flipMessage;
+        if (side) { flipMessage = "Light";}
+        else { flipMessage = "Dark";}
+        view.updateMessages("Cards are now flipped to " + flipMessage);
+        view.update();
+    }
+
+    public void handleSkipEveryoneCard(UnoPlayer currentPlayer, Card selectedCard) {
+        currentPlayer.playCard(selectedCard);
+        currentCard = selectedCard;
+        view.updateMessages("All players are skipped.");
+        view.update();
+    }
+
+    public void handleDrawFive(UnoPlayer currentPlayer, Card selectedCard, boolean direction) {
+        currentPlayer.playCard(selectedCard);
+        currentCard = selectedCard;
+
+        currentPlayerIndex = (currentPlayerIndex + (direction ? 1 : -1) + players.size()) % players.size();
+        UnoPlayer nextPlayer = players.get(currentPlayerIndex);
+        for(int i = 0; i < 5; ++i) {
+            nextPlayer.drawCard(deck.draw());
+        }
+        view.nextPlayerButton(true);
+        view.drawCardButton(false);
+        view.cardButtons(false);
+        view.updateMessages("Player " + nextPlayer.getPlayerName() + " must draw 5 cards.");
+        view.update();
+    }
+    public void handleWildDrawColourCard(Card.Colour colour, UnoPlayer currentPlayer, Card selectedCard, boolean direction) {
+        currentPlayer.playCard(selectedCard);
+        currentCard = new Card(colour, Card.CardType.WILD_DRAW_TWO);
+
+        currentPlayerIndex = (currentPlayerIndex + (direction ? 1 : -1) + players.size()) % players.size();
+        UnoPlayer nextPlayer = players.get(currentPlayerIndex);
+        Card drawnCard;
+        do {
+            drawnCard = deck.draw();
+            nextPlayer.drawCard(drawnCard);
+        }
+        while(currentCard.getDarkColour() != drawnCard.getDarkColour());
+        view.nextPlayerButton(true);
+        view.drawCardButton(false);
+        view.updateMessages(currentCard.getDarkColour() + " has been chosen. Player " + nextPlayer.getPlayerName() + " has to draw cards until they get a matching colour.");
+        view.cardButtons(false);
+        view.update();
+    }
+    public void handleDrawOne(UnoPlayer currentPlayer, Card selectedCard, boolean direction) {
+        currentPlayer.playCard(selectedCard);
+        currentCard = selectedCard;
+
+        currentPlayerIndex = (currentPlayerIndex + (direction ? 1 : -1) + players.size()) % players.size();
+        UnoPlayer nextPlayer = players.get(currentPlayerIndex);
+        nextPlayer.drawCard(deck.draw());
+        view.nextPlayerButton(true);
+        view.drawCardButton(false);
+        view.cardButtons(false);
+        view.updateMessages("Player " + nextPlayer.getPlayerName() + " must draw a card.");
+        view.update();
+    }
     /**
      * Handles playing a Skip card. If the card matches the color of the top card,
      * it skips the next player's turn.
@@ -220,16 +286,13 @@ public class UnoFlipModel {
      */
     public void handleSkipCard(UnoPlayer currentPlayer, Card selectedCard, boolean direction) {
         if (selectedCard.getColour() == currentCard.getColour() || currentCard.getCardType() == Card.CardType.SKIP) {
-            //System.out.println("Player " + currentPlayer.getName() + " plays: " + selectedCard.stringCard());
             currentPlayer.playCard(selectedCard);
             currentCard = selectedCard;
             currentPlayerIndex = (currentPlayerIndex + (direction ? 1 : -1) + players.size()) % players.size();
             view.nextPlayerButton(true);
             view.drawCardButton(false);
-            view.update();
             view.cardButtons(false);
-
-
+            view.update();
         } else {
             view.updateMessages("Invalid play. The card must match the color of the top card.");
         }
@@ -246,14 +309,13 @@ public class UnoFlipModel {
      */
     public void handleReverseCard(UnoPlayer currentPlayer, Card selectedCard, boolean direction) {
         if (selectedCard.getColour() == currentCard.getColour() || currentCard.getCardType() == Card.CardType.REVERSE) {
-            //System.out.println("Player " + currentPlayer.getName() + " plays: " + selectedCard.stringCard());
             currentPlayer.playCard(selectedCard);
             currentCard = selectedCard;
             this.direction = !direction;
             view.nextPlayerButton(true);
             view.drawCardButton(false);
-            view.update();
             view.cardButtons(false);
+            view.update();
         } else {
             view.updateMessages("Invalid play. The card must match the color of the top card.");
 
@@ -271,8 +333,6 @@ public class UnoFlipModel {
      * @return True if the play was successful; otherwise, false.
      */
     public void handleWildDrawTwoCards(Card.Colour colour, UnoPlayer currentPlayer, Card selectedCard, boolean direction) {
-        //String chosenColor = getChosenColor(scanner);
-        //System.out.println("Player " + currentPlayer.getName() + " plays: " + selectedCard.stringCard() + " color chosen: " + chosenColor);
         currentPlayer.playCard(selectedCard);
         currentCard = new Card(colour, Card.CardType.WILD_DRAW_TWO);
 
@@ -280,12 +340,11 @@ public class UnoFlipModel {
         UnoPlayer nextPlayer = players.get(currentPlayerIndex);
         nextPlayer.drawCard(deck.draw());
         nextPlayer.drawCard(deck.draw());
-        System.out.println("handleWildDrawTwoCards is reached");
         view.nextPlayerButton(true);
         view.drawCardButton(false);
-        view.updateMessages(colour + " has been chosen. Player " + currentPlayerIndex + " has to draw 2 cards. due to wild draw two");
-        view.update();
+        view.updateMessages(colour + " has been chosen. Player " + nextPlayer.getPlayerName() + " must draw 2 cards.");
         view.cardButtons(false);
+        view.update();
     }
 
     /**
@@ -301,8 +360,8 @@ public class UnoFlipModel {
         currentCard = selectedCard;
         view.nextPlayerButton(true);
         view.drawCardButton(false);
-        view.update();
         view.cardButtons(false);
+        view.update();
 
     }
 
