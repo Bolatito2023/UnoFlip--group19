@@ -14,7 +14,7 @@ public class Card {
     public enum Number {ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE}
 
     private Colour colour;
-    private DarkColor darkColor;
+    private DarkColor darkColour;
     private CardType cardT;
     private DarkCardType darkCardT;
     private Number num;
@@ -30,10 +30,10 @@ public class Card {
         this.colour = colour;
         this.cardT = card;
         switch (colour) {
-            case RED: this.darkColor = DarkColor.ORANGE;
-            case YELLOW: this.darkColor = DarkColor.TEAL;
-            case GREEN: this.darkColor = DarkColor.PINK;
-            case BLUE: this.darkColor = DarkColor.PURPLE;
+            case RED: this.darkColour = DarkColor.ORANGE;
+            case YELLOW: this.darkColour = DarkColor.TEAL;
+            case GREEN: this.darkColour = DarkColor.PINK;
+            case BLUE: this.darkColour = DarkColor.PURPLE;
         }
         switch (card) {
             case WILD: this.darkCardT = DarkCardType.WILD;
@@ -56,10 +56,10 @@ public class Card {
         this.cardT = CardType.NUMBER;
         this.num = number;
         switch (colour) {
-            case RED: this.darkColor = DarkColor.ORANGE;
-            case YELLOW: this.darkColor = DarkColor.TEAL;
-            case GREEN: this.darkColor = DarkColor.PINK;
-            case BLUE: this.darkColor = DarkColor.PURPLE;
+            case RED: this.darkColour = DarkColor.ORANGE;
+            case YELLOW: this.darkColour = DarkColor.TEAL;
+            case GREEN: this.darkColour = DarkColor.PINK;
+            case BLUE: this.darkColour = DarkColor.PURPLE;
         }
         this.darkCardT = DarkCardType.NUMBER;
     }
@@ -180,18 +180,34 @@ public class Card {
 
     /**
      * Returns the card colour.
-     * @return card's colour.
+     * @return colour the card's colour.
      */
     public Colour getColour() {
         return colour;
     }
 
     /**
+     * Returns the card dark colour.
+     * @return darkColor the card's dark colour.
+     */
+    public DarkColor getDarkColour() {
+        return darkColour;
+    }
+
+    /**
      * Returns the card type.
-     * @return card's type.
+     * @return cardT the card's type.
      */
     public CardType getCardType() {
         return cardT;
+    }
+
+    /**
+     * Returns the card dark type.
+     * @return darkCardT the card's dark type.
+     */
+    public DarkCardType getCardDarkType() {
+        return darkCardT;
     }
 
     /**

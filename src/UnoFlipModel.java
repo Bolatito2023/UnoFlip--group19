@@ -8,7 +8,7 @@ public class UnoFlipModel {
     private List<UnoPlayer> players;
     private Card currentCard;
     private Deck deck;
-    private Side side;
+    private boolean side; //true for light side, false for dark side
     private int currentPlayerIndex;
     private int roundNumber;
     UnoFlipModelViewFrame view;
@@ -23,7 +23,7 @@ public class UnoFlipModel {
         players = new ArrayList<>();
         initializePlayers(numPlayers, deck);
         direction = true;
-        side = Side.LIGHT;
+        side = true;
         currentPlayerIndex = 0;
         this.deck = deck;
         currentCard = deck.draw();
@@ -57,7 +57,22 @@ public class UnoFlipModel {
      * @return True if the card can be played; otherwise, false.
      */
     public boolean isValidUnoPlay(Card card) {
-        return card.getColour() == currentCard.getColour() || card.getNumber() == currentCard.getNumber();
+        if (side) {
+            if (card.getColour() == Card.Colour.NONE){
+                return card.getColour() == currentCard.getColour() || card.getCardType() == currentCard.getCardType();
+            }
+            else {
+                return card.getColour() == currentCard.getColour() || card.getNumber() == currentCard.getNumber();
+            }
+        }
+        else {
+            if (card.getDarkColour() == Card.DarkColor.NONE){
+                return card.getDarkColour() == currentCard.getDarkColour() || card.getCardDarkType() == currentCard.getCardDarkType();
+            }
+            else {
+                return card.getDarkColour() == currentCard.getDarkColour() || card.getNumber() == currentCard.getNumber();
+            }
+        }
     }
 
     /**
@@ -281,7 +296,7 @@ public class UnoFlipModel {
      * @return True if the play was successful; otherwise, false.
      */
     public void handleValidPlay(UnoPlayer currentPlayer, Card selectedCard) {
-        System.out.println("Player " + currentPlayer.getPlayerName() + " plays: " + selectedCard.toString());
+        System.out.println("Player " + currentPlayer.getPlayerName() + " plays: " + selectedCard.toString(side));
         currentPlayer.playCard(selectedCard);
         currentCard = selectedCard;
         view.nextPlayerButton(true);
