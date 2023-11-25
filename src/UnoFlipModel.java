@@ -194,11 +194,8 @@ public class UnoFlipModel {
      * @param colour        The input for the colour chosen.
      * @param currentPlayer The current player.
      * @param selectedCard  The Wild card to play.
-     * @return True if the play was successful; otherwise, false.
      */
     public void handleWildCard(Card.Colour colour, UnoPlayer currentPlayer, Card selectedCard) {
-        //String chosenColor = getChosenColor(scanner);
-        //System.out.println("Player " + currentPlayer.getName() + " plays: " + selectedCard.stringCard() + " color chosen: " + chosenColor);
         currentPlayer.playCard(selectedCard);
         currentCard = new Card(colour, Card.CardType.WILD);
         view.nextPlayerButton(true);
@@ -208,6 +205,11 @@ public class UnoFlipModel {
         view.update();
     }
 
+    /**
+     * Handles playing a Flip card by switching the cards' sides.
+     * @param currentPlayer The current player.
+     * @param selectedCard  The Flip card to play.
+     */
     public void handleFlipCard(UnoPlayer currentPlayer, Card selectedCard) {
         side = !side;
         currentPlayer.playCard(selectedCard);
@@ -222,6 +224,11 @@ public class UnoFlipModel {
         view.update();
     }
 
+    /**
+     * Handles playing a Skip Everyone card by allowing the current player to play again.
+     * @param currentPlayer The current player.
+     * @param selectedCard  The Skip Everyone card to play.
+     */
     public void handleSkipEveryoneCard(UnoPlayer currentPlayer, Card selectedCard) {
         currentPlayer.playCard(selectedCard);
         currentCard = selectedCard;
@@ -229,6 +236,12 @@ public class UnoFlipModel {
         view.update();
     }
 
+    /**
+     * Handles playing a Draw Five card by forcing the next player to draw five cards and skips their turn.
+     * @param currentPlayer The current player.
+     * @param selectedCard  The Draw Five card to play.
+     * @param direction     The direction of play.
+     */
     public void handleDrawFive(UnoPlayer currentPlayer, Card selectedCard, boolean direction) {
         currentPlayer.playCard(selectedCard);
         currentCard = selectedCard;
@@ -244,6 +257,15 @@ public class UnoFlipModel {
         view.updateMessages("Player " + nextPlayer.getPlayerName() + " must draw 5 cards.");
         view.update();
     }
+
+    /**
+     * Handles playing a Wild Draw Colour card by forcing the next player to draw until
+     * they draw a card of the selected colour and skips their turn.
+     * @param colour        The corresponding light colour selected for the dark Wild Draw Colour card.
+     * @param currentPlayer The current player.
+     * @param selectedCard  The Wild Draw Colour card to play.
+     * @param direction     The direction of play.
+     */
     public void handleWildDrawColourCard(Card.Colour colour, UnoPlayer currentPlayer, Card selectedCard, boolean direction) {
         currentPlayer.playCard(selectedCard);
         currentCard = new Card(colour, Card.CardType.WILD_DRAW_TWO);
@@ -262,6 +284,13 @@ public class UnoFlipModel {
         view.cardButtons(false);
         view.update();
     }
+
+    /**
+     * Handles playing a Draw One card by forcing the next player to draw a card and skips their turn.
+     * @param currentPlayer The current player.
+     * @param selectedCard  The Draw One card to play.
+     * @param direction     The direction of play.
+     */
     public void handleDrawOne(UnoPlayer currentPlayer, Card selectedCard, boolean direction) {
         currentPlayer.playCard(selectedCard);
         currentCard = selectedCard;
@@ -282,7 +311,6 @@ public class UnoFlipModel {
      * @param currentPlayer The current player.
      * @param selectedCard  The Skip card to play.
      * @param direction     The direction of play.
-     * @return True if the play was successful; otherwise, false.
      */
     public void handleSkipCard(UnoPlayer currentPlayer, Card selectedCard, boolean direction) {
         if (selectedCard.getColour() == currentCard.getColour() || currentCard.getCardType() == Card.CardType.SKIP) {
@@ -305,7 +333,6 @@ public class UnoFlipModel {
      * @param currentPlayer The current player.
      * @param selectedCard  The Reverse card to play.
      * @param direction     The direction of play.
-     * @return True if the play was successful; otherwise, false.
      */
     public void handleReverseCard(UnoPlayer currentPlayer, Card selectedCard, boolean direction) {
         if (selectedCard.getColour() == currentCard.getColour() || currentCard.getCardType() == Card.CardType.REVERSE) {
@@ -330,7 +357,6 @@ public class UnoFlipModel {
      * @param currentPlayer The current player.
      * @param selectedCard  The Wild Draw Two Cards to play.
      * @param direction     The direction of play.
-     * @return True if the play was successful; otherwise, false.
      */
     public void handleWildDrawTwoCards(Card.Colour colour, UnoPlayer currentPlayer, Card selectedCard, boolean direction) {
         currentPlayer.playCard(selectedCard);
@@ -352,7 +378,6 @@ public class UnoFlipModel {
      *
      * @param currentPlayer The current player.
      * @param selectedCard  The card to play.
-     * @return True if the play was successful; otherwise, false.
      */
     public void handleValidPlay(UnoPlayer currentPlayer, Card selectedCard) {
         System.out.println("Player " + currentPlayer.getPlayerName() + " plays: " + selectedCard.toString(side));
