@@ -9,10 +9,22 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="bed4e951-0f91-4b16-99dd-52d3a0ffa571" name="Changes" comment="Added javadocs to new methods in UnoFlipModel">
+    <list default="true" id="bed4e951-0f91-4b16-99dd-52d3a0ffa571" name="Changes" comment="Updated card textures">
+      <change afterPath="$PROJECT_DIR$/unoCards/Light/blue_flip.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/unoCards/Light/green_flip.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/unoCards/Light/red_flip.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/unoCards/Light/yellow_flip.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Card.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Card.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Deck.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Deck.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/UnoFlipController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/UnoFlipController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/UnoFlipModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/UnoFlipModel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/UnoFlipModelViewFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/UnoFlipModelViewFrame.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/unoCards/Dark/wild_wild.png" beforeDir="false" afterPath="$PROJECT_DIR$/unoCards/Dark/wild.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/unoCards/Dark/wild_wild_draw_colour.png" beforeDir="false" afterPath="$PROJECT_DIR$/unoCards/Dark/wild_draw_colour.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/unoCards/Light/wild_wild.png" beforeDir="false" afterPath="$PROJECT_DIR$/unoCards/Light/wild.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/unoCards/Light/wild_wild_draw_two.png" beforeDir="false" afterPath="$PROJECT_DIR$/unoCards/Light/wild_draw_two.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/unoCards/Unknown/blank.png" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -53,7 +65,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "git-widget-placeholder": "master",
-    "last_opened_file_path": "C:/Carleton/Fall 2023/SYSC 3110/UnoFlip--group19",
+    "last_opened_file_path": "C:/Carleton/Fall 2023/SYSC 3110/Other Projects/Milestone2/unoCards/Light",
     "onboarding.tips.debug.path": "C:/Users/HP/Downloads/sysc 3110/UnoFlip game/src/Main.java",
     "project.structure.last.edited": "Artifacts",
     "project.structure.proportion": "0.15",
@@ -70,11 +82,11 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Carleton\Fall 2023\SYSC 3110\Other Projects\Milestone2\unoCards\Light" />
       <recent name="C:\Carleton\Fall 2023\SYSC 3110\Other Projects\Milestone2\unoCards" />
       <recent name="C:\Carleton\Fall 2023\SYSC 3110\Other Projects\Milestone2\unoCards\Unknown" />
       <recent name="C:\Carleton\Fall 2023\SYSC 3110\Other Projects\Milestone2\unoCards\wild" />
       <recent name="C:\Carleton\Fall 2023\SYSC 3110\Other Projects\Milestone2\unoCards\wild_draw_two_cards" />
-      <recent name="C:\Carleton\Fall 2023\SYSC 3110\Other Projects\Milestone2\unoCards\yellow" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Carleton\Fall 2023\SYSC 3110\Other Projects\Milestone2\unoCards\yellow" />
@@ -240,7 +252,23 @@
       <option name="project" value="LOCAL" />
       <updated>1700956361216</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="Updated UnoFlipController class to handle dark cards">
+      <option name="closed" value="true" />
+      <created>1700959564928</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1700959564928</updated>
+    </task>
+    <task id="LOCAL-00020" summary="Updated card textures">
+      <option name="closed" value="true" />
+      <created>1700959727809</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1700959727809</updated>
+    </task>
+    <option name="localTasksCounter" value="21" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -272,6 +300,8 @@
     <MESSAGE value="Added getters for dark colour and dark type in Card class, and updated isValidPlay in UnoFlipModel" />
     <MESSAGE value="Added methods to handle dark cards in UnoFlipModel" />
     <MESSAGE value="Added javadocs to new methods in UnoFlipModel" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added javadocs to new methods in UnoFlipModel" />
+    <MESSAGE value="Updated UnoFlipController class to handle dark cards" />
+    <MESSAGE value="Updated card textures" />
+    <option name="LAST_COMMIT_MESSAGE" value="Updated card textures" />
   </component>
 </project>

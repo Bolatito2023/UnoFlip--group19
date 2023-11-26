@@ -12,8 +12,8 @@ public class UnoFlipModelViewFrame extends JFrame {
     private JPanel messagesPanel;
     private JTextArea messagesTextArea;
     private JLabel imageLabel;
-
     private Deck deck;
+    private boolean side; //true for light side, false for dark side
 
     /**
      * Constructs a viewer for UnoFlip.
@@ -21,6 +21,7 @@ public class UnoFlipModelViewFrame extends JFrame {
      */
     public UnoFlipModelViewFrame(UnoFlipModel game) {
         gameModel = game;
+        side = gameModel.getSide();
         setTitle("Uno Game");
         setSize(800, 600);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -98,30 +99,30 @@ public class UnoFlipModelViewFrame extends JFrame {
      * Update player's hand panel.
      */
     public void updatePlayerHandPanel() {
-        playerHandPanel.removeAll(); // Clear the existing cards (buttons)
+        playerHandPanel.removeAll(); // Clear the existing cards
 
-        // Get the current player's hand
+        side = gameModel.getSide();
+
         Hand currentHand = gameModel.getCurrentPlayer().getHand();
 
         for (Card card : currentHand.getCards()) {
-            System.out.println(card.toString());
             JButton cardButton = new JButton(card.toString());
             ImageIcon cardImage = loadImagePath(card);
+
+            cardButton.setText(card.toString(side));
             cardImage.setImage(cardImage.getImage().getScaledInstance(110, 200, Image.SCALE_SMOOTH));
             cardButton.setIcon(cardImage);
 
             cardButton.setLayout(new BoxLayout(cardButton, BoxLayout.Y_AXIS));
-
-            JLabel cardLabel = new JLabel(card.toString(), SwingConstants.CENTER);
+            JLabel cardLabel = new JLabel(card.toString(side), SwingConstants.CENTER);
             cardButton.add(cardLabel);
+
             cardButton.setPreferredSize(new Dimension(150, 200));
             cardButton.addActionListener(new UnoFlipController(gameModel, this));
 
-            // Add the button to the player hand panel
             playerHandPanel.add(cardButton);
         }
 
-        // Refresh the panel to show the updated hand
         playerHandPanel.revalidate();
         playerHandPanel.repaint();
     }
@@ -140,7 +141,7 @@ public class UnoFlipModelViewFrame extends JFrame {
             topCardLabel.setIcon(null);
             topCardLabel.setText("Image not found");
         }
-        String cardText = topCard.toString();
+        String cardText = topCard.toString(side);
         topCardLabel.setText(cardText);
 
     }
@@ -168,11 +169,8 @@ public class UnoFlipModelViewFrame extends JFrame {
         messagesTextArea.append(message + "\n");
 
         if (drawnCard != null) {
-            // Assuming you have a JLabel to display the image
             ImageIcon cardImage = loadImagePath(drawnCard);
             imageLabel = new JLabel(cardImage);
-
-            // Add the image to the messages panel
             messagesPanel.add(imageLabel, BorderLayout.NORTH);
             messagesPanel.revalidate();
             messagesPanel.repaint();
@@ -183,7 +181,6 @@ public class UnoFlipModelViewFrame extends JFrame {
      * Update the label displaying the current player.
      */
     private void updateCurrentPlayerDisplay(){
-
         currentPlayer = gameModel.getCurrentPlayer();
         currentPlayerLabel.setText("Current Player: " + currentPlayer.getPlayerName());
     }
@@ -195,25 +192,18 @@ public class UnoFlipModelViewFrame extends JFrame {
      */
     protected ImageIcon loadImagePath(Card card) {
         String imagePath;
-
-        if (card.getCardType() == Card.CardType.WILD || card.getCardType() == Card.CardType.WILD_DRAW_TWO) {
-            imagePath = "unoCards/" + card.getCardType().toString().toLowerCase() + "/" + card.getCardType().toString().toLowerCase() + ".png";
+        if (card.getCardType() == Card.CardType.WILD) {
+            imagePath = "unoCards/Light/wild.png";
         }
-        else if (card.getCardType() == Card.CardType.REVERSE) {
-            imagePath = "unoCards/" + card.getCardType().toString().toLowerCase() + "/" + card.getColour().toString().toLowerCase() + card.getCardType().toString().toLowerCase() + ".png";
+        else {
+            if (side) {
+                imagePath = "unoCards/Light/" + card.toString(side).toLowerCase() + ".png";
+            } else {
+                imagePath = "unoCards/Dark/" + card.toString(side).toLowerCase() + ".png";
+            }
         }
-        else if (card.getCardType() == Card.CardType.SKIP) {
-            imagePath = "unoCards/" + card.getCardType().toString().toLowerCase() + "/" + card.getColour().toString().toLowerCase() + card.getCardType().toString().toLowerCase() + ".png";
-        }
-        else if (card.getCardType() == Card.CardType.DRAW_ONE) {
-            imagePath = "unoCards/" + card.getCardType().toString().toLowerCase() + "/" + card.getColour().toString().toLowerCase() + card.getCardType().toString().toLowerCase() + ".png";
-        }
-        else if (card.getCardType() == Card.CardType.NUMBER) {
-            imagePath = "unoCards/" + card.getColour().toString().toLowerCase() + "/" + card.getColour().toString().toLowerCase() + card.getNumber().toString().toLowerCase() + ".png";
-            System.out.println("Image Path: " + imagePath);
-        }
-        else{imagePath = "unoCards/Unknown/blank.png";}
-
+        System.out.println(imagePath);
+        imagePath = imagePath.replaceAll(" ", "_");
         ImageIcon CardImage = new ImageIcon(imagePath);
 
         return CardImage;

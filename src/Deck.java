@@ -11,7 +11,7 @@ public class Deck {
 
     /**
      * The number of "special" cards (aka "action cards") of each suit in
-     * the deck. These include, for instance, Skips,Draw 1 and Reverses,flip.
+     * the deck. These include, for instance, Skip, Draw 1, Reverse, and Flip cards.
      */
     public static final int NUMBER_OF_DUP_SPECIAL_CARDS = 2;
 
@@ -39,7 +39,7 @@ public class Deck {
     public void giveDeck(){
         deck.clear();
 
-        Card.CardType[] cards = {Card.CardType.SKIP, Card.CardType.REVERSE, Card.CardType.DRAW_ONE}; //Card.CardType.FLIP not implemented yet
+        Card.CardType[] cards = {Card.CardType.SKIP, Card.CardType.REVERSE, Card.CardType.DRAW_ONE, Card.CardType.FLIP};
         Card.Colour[] colors = {Card.Colour.BLUE, Card.Colour.GREEN, Card.Colour.RED, Card.Colour.YELLOW};
         Card.Number[] num = {Card.Number.ONE, Card.Number.TWO, Card.Number.THREE, Card.Number.FOUR,Card.Number.FIVE,Card.Number.SIX,Card.Number.SEVEN,Card.Number.EIGHT, Card.Number.NINE};
 

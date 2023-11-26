@@ -6,7 +6,7 @@
 public class Card {
     public enum Colour {BLUE, GREEN, RED, YELLOW, NONE}
 
-    public enum DarkColor {ORANGE, PINK, PURPLE, TEAL, NONE}
+    public enum DarkColour {ORANGE, PINK, PURPLE, TEAL, NONE}
     public enum CardType {NUMBER, DRAW_ONE, REVERSE, SKIP, FLIP, WILD, WILD_DRAW_TWO}
 
     public enum DarkCardType {NUMBER, DRAW_FIVE, REVERSE, SKIP_EVERYONE, FLIP, WILD, WILD_DRAW_COLOUR}
@@ -14,7 +14,7 @@ public class Card {
     public enum Number {ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE}
 
     private Colour colour;
-    private DarkColor darkColour;
+    private DarkColour darkColour;
     private CardType cardT;
     private DarkCardType darkCardT;
     private Number num;
@@ -29,21 +29,8 @@ public class Card {
     public Card(Colour colour, CardType card) {
         this.colour = colour;
         this.cardT = card;
-        switch (colour) {
-            case RED: this.darkColour = DarkColor.ORANGE;
-            case YELLOW: this.darkColour = DarkColor.TEAL;
-            case GREEN: this.darkColour = DarkColor.PINK;
-            case BLUE: this.darkColour = DarkColor.PURPLE;
-        }
-        switch (card) {
-            case WILD: this.darkCardT = DarkCardType.WILD;
-            case WILD_DRAW_TWO: this.darkCardT = DarkCardType.WILD_DRAW_COLOUR;
-            case DRAW_ONE: this.darkCardT = DarkCardType.DRAW_FIVE;
-            case FLIP: this.darkCardT = DarkCardType.FLIP;
-            case REVERSE: this.darkCardT = DarkCardType.REVERSE;
-            case SKIP: this.darkCardT = DarkCardType.SKIP_EVERYONE;
-            default: this.darkCardT = DarkCardType.NUMBER;
-        }
+        this.darkColour = initializeDarkColour(colour);
+        this.darkCardT = initializeDarkType(card);
     }
 
     /**
@@ -55,15 +42,30 @@ public class Card {
         this.colour = colour;
         this.cardT = CardType.NUMBER;
         this.num = number;
-        switch (colour) {
-            case RED: this.darkColour = DarkColor.ORANGE;
-            case YELLOW: this.darkColour = DarkColor.TEAL;
-            case GREEN: this.darkColour = DarkColor.PINK;
-            case BLUE: this.darkColour = DarkColor.PURPLE;
-        }
+        this.darkColour = initializeDarkColour(colour);
         this.darkCardT = DarkCardType.NUMBER;
     }
+    private DarkColour initializeDarkColour(Colour colour) {
+        switch (colour) {
+            case RED: return DarkColour.ORANGE;
+            case YELLOW: return DarkColour.TEAL;
+            case GREEN: return DarkColour.PINK;
+            case BLUE: return DarkColour.PURPLE;
+            default: return DarkColour.NONE;
+        }
+    }
 
+    private DarkCardType initializeDarkType(CardType card) {
+        switch (card) {
+            case WILD: return DarkCardType.WILD;
+            case WILD_DRAW_TWO: return DarkCardType.WILD_DRAW_COLOUR;
+            case DRAW_ONE: return DarkCardType.DRAW_FIVE;
+            case FLIP: return DarkCardType.FLIP;
+            case REVERSE: return DarkCardType.REVERSE;
+            case SKIP: return DarkCardType.SKIP_EVERYONE;
+            default: return DarkCardType.NUMBER;
+        }
+    }
     /**
      * Returns a string representation of enum Number.
      * @return string representation of Number.
@@ -100,23 +102,47 @@ public class Card {
      */
     public String toString(boolean side) {
         String str = "";
-        switch (colour) {
-            case BLUE:
-                str+="BLUE ";
-                break;
-            case GREEN:
-                str+="GREEN ";
-                break;
-            case RED:
-                str+="RED ";
-                break;
-            case YELLOW:
-                str+="YELLOW ";
-                break;
-            case NONE:
-                str+="";
-                break;
-            default:throw new IllegalArgumentException("No such Colour");
+        if (side) {
+            switch (colour) {
+                case BLUE:
+                    str += "BLUE ";
+                    break;
+                case GREEN:
+                    str += "GREEN ";
+                    break;
+                case RED:
+                    str += "RED ";
+                    break;
+                case YELLOW:
+                    str += "YELLOW ";
+                    break;
+                case NONE:
+                    str += "";
+                    break;
+                default:
+                    throw new IllegalArgumentException("No such Colour");
+            }
+        }
+        else {
+            switch (darkColour) {
+                case ORANGE:
+                    str += "ORANGE ";
+                    break;
+                case TEAL:
+                    str += "TEAL ";
+                    break;
+                case PINK:
+                    str += "PINK ";
+                    break;
+                case PURPLE:
+                    str += "PURPLE ";
+                    break;
+                case NONE:
+                    str += "";
+                    break;
+                default:
+                    throw new IllegalArgumentException("No such Colour");
+            }
         }
 
         if (side) {
@@ -190,7 +216,7 @@ public class Card {
      * Returns the card dark colour.
      * @return darkColor the card's dark colour.
      */
-    public DarkColor getDarkColour() {
+    public DarkColour getDarkColour() {
         return darkColour;
     }
 

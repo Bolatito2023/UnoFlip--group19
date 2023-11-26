@@ -43,7 +43,7 @@ public class UnoFlipModel {
 
         for (int i = 1; i <= numPlayers; i++) {
             String playerName = JOptionPane.showInputDialog(null,
-                    "Enter Player 1's name",
+                    "Enter Player " + i + "'s name",
                     "Name:",
                     JOptionPane.QUESTION_MESSAGE);
             UnoPlayer player = new UnoPlayer(playerName, deck);
@@ -57,22 +57,26 @@ public class UnoFlipModel {
      * @return True if the card can be played; otherwise, false.
      */
     public boolean isValidUnoPlay(Card card) {
+        boolean isvalid;
+        System.out.println(side);
         if (side) {
             if (card.getColour() == Card.Colour.NONE){
-                return card.getColour() == currentCard.getColour() || card.getCardType() == currentCard.getCardType();
+                isvalid = card.getColour() == currentCard.getColour() || card.getCardType() == currentCard.getCardType();
             }
             else {
-                return card.getColour() == currentCard.getColour() || card.getNumber() == currentCard.getNumber();
+                isvalid = card.getColour() == currentCard.getColour() || card.getNumber() == currentCard.getNumber();
             }
         }
         else {
-            if (card.getDarkColour() == Card.DarkColor.NONE){
-                return card.getDarkColour() == currentCard.getDarkColour() || card.getCardDarkType() == currentCard.getCardDarkType();
+            if (card.getDarkColour() == Card.DarkColour.NONE){
+                isvalid = card.getDarkColour() == currentCard.getDarkColour() || card.getCardDarkType() == currentCard.getCardDarkType();
             }
             else {
-                return card.getDarkColour() == currentCard.getDarkColour() || card.getNumber() == currentCard.getNumber();
+                isvalid = card.getDarkColour() == currentCard.getDarkColour() || card.getNumber() == currentCard.getNumber();
             }
         }
+        System.out.println(isvalid);
+        return isvalid;
     }
 
     /**
@@ -222,6 +226,7 @@ public class UnoFlipModel {
         else { flipMessage = "Dark";}
         view.updateMessages("Cards are now flipped to " + flipMessage);
         view.update();
+        System.out.println("cards flipped");
     }
 
     /**

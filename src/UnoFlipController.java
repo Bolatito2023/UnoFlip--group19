@@ -61,6 +61,10 @@ public class UnoFlipController  implements ActionListener {
                         gameModel.handleReverseCard(currentPlayer, c, gameModel.getDirection());
                         break;
                     }
+                    if (c.getCardType() == Card.CardType.FLIP && c.getColour() == gameModel.getTopCard().getColour()) {
+                        gameModel.handleFlipCard(currentPlayer, c);
+                        break;
+                    }
                     if (gameModel.isValidUnoPlay(c)) {
                         gameModel.handleValidPlay(currentPlayer, c);
                         break;
@@ -152,7 +156,7 @@ public class UnoFlipController  implements ActionListener {
      * @return the corresponding light colour of the dark colour the current player chooses.
      */
     private static Card.Colour chooseDarkColour() {
-        Card.DarkColor[] possibleDarkColours = Card.DarkColor.values();
+        Card.DarkColour[] possibleDarkColours = Card.DarkColour.values();
         String[] darkColourNames = new String[possibleDarkColours.length];
 
         for (int i = 0; i < possibleDarkColours.length; i++) {
@@ -175,7 +179,7 @@ public class UnoFlipController  implements ActionListener {
             if (chosenColourName != null) {
                 try {
                     Card.Colour chosenCard = Card.Colour.NONE;
-                    switch (Card.DarkColor.valueOf(chosenColourName)) {
+                    switch (Card.DarkColour.valueOf(chosenColourName)) {
                         case ORANGE:
                             chosenCard = Card.Colour.RED;
                         case TEAL:
