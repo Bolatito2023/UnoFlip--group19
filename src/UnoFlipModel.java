@@ -19,9 +19,9 @@ public class UnoFlipModel {
      * @param numPlayers the number of players in game.
      * @param deck the game's card deck.
      */
-    public UnoFlipModel(int numPlayers, Deck deck) {
+    public UnoFlipModel(int numPlayers, int numAIPlayers, Deck deck) {
         players = new ArrayList<>();
-        initializePlayers(numPlayers, deck);
+        initializePlayers(numPlayers, numAIPlayers, deck);
         direction = true;
         side = true;
         currentPlayerIndex = 0;
@@ -38,8 +38,7 @@ public class UnoFlipModel {
      * Initializes the players of the game and allows user to enter their names.
      * @param numPlayers The number of players in the game.
      */
-    private void initializePlayers(int numPlayers, Deck deck) {
-        Scanner scanner = new Scanner(System.in);
+    private void initializePlayers(int numPlayers, int numAIPlayers, Deck deck) {
 
         for (int i = 1; i <= numPlayers; i++) {
             String playerName = JOptionPane.showInputDialog(null,
@@ -48,6 +47,12 @@ public class UnoFlipModel {
                     JOptionPane.QUESTION_MESSAGE);
             UnoPlayer player = new UnoPlayer(playerName, deck);
             players.add(player);
+        }
+
+        for (int i = 1; i <= numPlayers; i++) {
+            String playerName = "AI " + i;
+            UnoPlayerAI playerAI = new UnoPlayerAI(playerName, deck, this);
+            players.add(playerAI);
         }
     }
 
@@ -421,6 +426,9 @@ public class UnoFlipModel {
     public UnoPlayer getNextCurrentPlayer() {
         currentPlayerIndex = (currentPlayerIndex + (direction ? 1 : -1) + players.size()) % players.size();
         view.update();
+        if (currentPlayer instanceof UnoPlayerAI){
+            ((UnoPlayerAI) currentPlayer).playRandomValidCard();
+        }
         return currentPlayer;
     }
 

@@ -233,13 +233,34 @@ public class UnoFlipModelViewFrame extends JFrame {
                     JOptionPane.ERROR_MESSAGE);
             System.exit(0);
         }
+        String numAIPlayersStr = JOptionPane.showInputDialog(null,
+                "How many AI players? (0-10)",
+                "Number of AI Players",
+                JOptionPane.QUESTION_MESSAGE);
+        int numAIPlayers = 0;
+        try {
+            numAIPlayers = Integer.parseInt(numAIPlayersStr);
+            if (numAIPlayers < 0 || numAIPlayers > 10) {
+                JOptionPane.showMessageDialog(null,
+                        "Please choose a number between 2 and 4.",
+                        "Invalid Number",
+                        JOptionPane.ERROR_MESSAGE);
+                System.exit(0);
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(null,
+                    "Invalid input. Please enter a number.",
+                    "Invalid Input",
+                    JOptionPane.ERROR_MESSAGE);
+            System.exit(0);
+        }
 
         // Start the game with new deck
         Deck deck = new Deck();
         deck.giveDeck();
         deck.shuffle();
 
-        UnoFlipModel unoGame = new UnoFlipModel(numPlayers, deck);
+        UnoFlipModel unoGame = new UnoFlipModel(numPlayers, numAIPlayers-1, deck);
         UnoFlipModelViewFrame view = new UnoFlipModelViewFrame(unoGame);
         view.setVisible(true);
     }
