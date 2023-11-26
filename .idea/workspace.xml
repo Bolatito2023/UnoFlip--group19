@@ -9,8 +9,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="bed4e951-0f91-4b16-99dd-52d3a0ffa571" name="Changes" comment="Added getters for dark colour and dark type in Card class, and updated isValidPlay in UnoFlipModel">
+    <list default="true" id="bed4e951-0f91-4b16-99dd-52d3a0ffa571" name="Changes" comment="Added javadocs to new methods in UnoFlipModel">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/UnoFlipController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/UnoFlipController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/UnoFlipModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/UnoFlipModel.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -223,7 +224,23 @@
       <option name="project" value="LOCAL" />
       <updated>1700951148620</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
+    <task id="LOCAL-00017" summary="Added methods to handle dark cards in UnoFlipModel">
+      <option name="closed" value="true" />
+      <created>1700955633300</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1700955633300</updated>
+    </task>
+    <task id="LOCAL-00018" summary="Added javadocs to new methods in UnoFlipModel">
+      <option name="closed" value="true" />
+      <created>1700956361216</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1700956361216</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -253,6 +270,8 @@
     <MESSAGE value="Added dark side to Card class" />
     <MESSAGE value="Added getters for dark colour and type in Card class, and updated isValidPlay in UnoFlipModel" />
     <MESSAGE value="Added getters for dark colour and dark type in Card class, and updated isValidPlay in UnoFlipModel" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added getters for dark colour and dark type in Card class, and updated isValidPlay in UnoFlipModel" />
+    <MESSAGE value="Added methods to handle dark cards in UnoFlipModel" />
+    <MESSAGE value="Added javadocs to new methods in UnoFlipModel" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added javadocs to new methods in UnoFlipModel" />
   </component>
 </project>

@@ -424,4 +424,8 @@ public class UnoFlipModel {
     public boolean getDirection() {
         return direction;
     }
+
+    public boolean getSide() {
+        return side;
+    }
 }

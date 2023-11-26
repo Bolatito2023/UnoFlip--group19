@@ -7,8 +7,8 @@ import java.util.ArrayList;
 public class UnoFlipController  implements ActionListener {
     UnoFlipModel gameModel;
     UnoFlipModelViewFrame gameView;
-    UnoPlayer currentPlayer;
-
+    private UnoPlayer currentPlayer;
+    private boolean side; //true for light side, false for dark side
 
     /**
      * Constructs a controller for UnoFlip.
@@ -28,6 +28,7 @@ public class UnoFlipController  implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         currentPlayer = gameModel.getCurrentPlayer();
+        side = gameModel.getSide();
         String clickedButton = e.getActionCommand();
         ArrayList<Card> handCards = currentPlayer.getHand().getCards();
 
@@ -42,30 +43,67 @@ public class UnoFlipController  implements ActionListener {
 
         }
         for (Card c : handCards) {
-            if (clickedButton.equals(c.toString())) {
-                if (c.getCardType() == Card.CardType.WILD) {
-                    gameModel.handleWildCard(chooseColour(), currentPlayer, c);
-                    break;
+            if (side) {
+                if (clickedButton.equals(c.toString(true))) {
+                    if (c.getCardType() == Card.CardType.WILD) {
+                        gameModel.handleWildCard(chooseColour(), currentPlayer, c);
+                        break;
+                    }
+                    if (c.getCardType() == Card.CardType.WILD_DRAW_TWO) {
+                        gameModel.handleWildDrawTwoCards(chooseColour(), currentPlayer, c, gameModel.getDirection());
+                        break;
+                    }
+                    if (c.getCardType() == Card.CardType.SKIP && c.getColour() == gameModel.getTopCard().getColour()) {
+                        gameModel.handleSkipCard(currentPlayer, c, gameModel.getDirection());
+                        break;
+                    }
+                    if (c.getCardType() == Card.CardType.REVERSE && c.getColour() == gameModel.getTopCard().getColour()) {
+                        gameModel.handleReverseCard(currentPlayer, c, gameModel.getDirection());
+                        break;
+                    }
+                    if (gameModel.isValidUnoPlay(c)) {
+                        gameModel.handleValidPlay(currentPlayer, c);
+                        break;
+                    }
+                    else {
+                        gameView.updateMessages("This card cannot be played!");
+                        gameView.drawCardButton(true);
+                    }
                 }
-                if (c.getCardType() == Card.CardType.WILD_DRAW_TWO) {
-                    gameModel.handleWildDrawTwoCards(chooseColour(), currentPlayer, c, gameModel.getDirection());
-                    break;
-                }
-                if (c.getCardType() == Card.CardType.SKIP && c.getColour() == gameModel.getTopCard().getColour()) {
-                    gameModel.handleSkipCard(currentPlayer, c, gameModel.getDirection());
-                    break;
-                }
-                if (c.getCardType() == Card.CardType.REVERSE && c.getColour() == gameModel.getTopCard().getColour()) {
-                    gameModel.handleReverseCard(currentPlayer, c, gameModel.getDirection());
-                    break;
-                }
-                if (gameModel.isValidUnoPlay(c)) {
-                    gameModel.handleValidPlay(currentPlayer, c);
-                    break;
-                }
-                else {
-                    gameView.updateMessages("This card cannot be played!");
-                    gameView.drawCardButton(true);
+            }
+            else {
+                if (clickedButton.equals(c.toString(false))) {
+                    if (c.getCardDarkType() == Card.DarkCardType.SKIP_EVERYONE && c.getDarkColour() == gameModel.getTopCard().getDarkColour()) {
+                        gameModel.handleSkipEveryoneCard(currentPlayer, c);
+                        break;
+                    }
+                    if (c.getCardDarkType() == Card.DarkCardType.DRAW_FIVE) {
+                        gameModel.handleDrawFive(currentPlayer, c, gameModel.getDirection());
+                        break;
+                    }
+                    if (c.getCardDarkType() == Card.DarkCardType.FLIP && c.getDarkColour() == gameModel.getTopCard().getDarkColour()) {
+                        gameModel.handleFlipCard(currentPlayer, c);
+                        break;
+                    }
+                    if (c.getCardDarkType() == Card.DarkCardType.REVERSE && c.getDarkColour() == gameModel.getTopCard().getDarkColour()) {
+                        gameModel.handleReverseCard(currentPlayer, c, gameModel.getDirection());
+                        break;
+                    }
+                    if (c.getCardDarkType() == Card.DarkCardType.WILD) {
+                        gameModel.handleWildCard(chooseDarkColour(), currentPlayer, c);
+                        break;
+                    }
+                    if (c.getCardDarkType() == Card.DarkCardType.WILD_DRAW_COLOUR) {
+                        gameModel.handleWildDrawColourCard(chooseDarkColour(), currentPlayer, c, gameModel.getDirection());
+                        break;
+                    }
+                    if (gameModel.isValidUnoPlay(c)) {
+                        gameModel.handleValidPlay(currentPlayer, c);
+                        break;
+                    } else {
+                        gameView.updateMessages("Invalid play");
+                        gameView.drawCardButton(true);
+                    }
                 }
             }
         }
@@ -99,6 +137,55 @@ public class UnoFlipController  implements ActionListener {
             if (chosenColourName != null) {
                 try {
                     return Card.Colour.valueOf(chosenColourName);
+                } catch (IllegalArgumentException e) {
+                    JOptionPane.showMessageDialog(null, "Invalid selection. Please choose a colour.");
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "You must choose a colour.");
+            }
+        }
+    }
+
+    /**
+     * Returns the corresponding light colour of the dark colour
+     * a player chooses after playing a dark wild card.
+     * @return the corresponding light colour of the dark colour the current player chooses.
+     */
+    private static Card.Colour chooseDarkColour() {
+        Card.DarkColor[] possibleDarkColours = Card.DarkColor.values();
+        String[] darkColourNames = new String[possibleDarkColours.length];
+
+        for (int i = 0; i < possibleDarkColours.length; i++) {
+            darkColourNames[i] = possibleDarkColours[i].name();
+        }
+
+        String chosenColourName = null;
+
+        while (true) {
+            chosenColourName = (String) JOptionPane.showInputDialog(
+                    null,
+                    "Choose a colour:",
+                    "Colour Selection",
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    darkColourNames,
+                    darkColourNames[0]);
+
+            // Check if a valid colour was chosen
+            if (chosenColourName != null) {
+                try {
+                    Card.Colour chosenCard = Card.Colour.NONE;
+                    switch (Card.DarkColor.valueOf(chosenColourName)) {
+                        case ORANGE:
+                            chosenCard = Card.Colour.RED;
+                        case TEAL:
+                            chosenCard = Card.Colour.YELLOW;
+                        case PINK:
+                            chosenCard = Card.Colour.GREEN;
+                        case PURPLE:
+                            chosenCard = Card.Colour.BLUE;
+                    }
+                    return chosenCard;
                 } catch (IllegalArgumentException e) {
                     JOptionPane.showMessageDialog(null, "Invalid selection. Please choose a colour.");
                 }
