@@ -10,7 +10,7 @@ public class UnoFlipModelViewFrame extends JFrame {
     private UnoFlipModel gameModel;
     private UnoPlayer currentPlayer;
     private JPanel messagesPanel;
-    private JTextArea messagesTextArea;
+    private JLabel messagesTextLabel;
     private JLabel imageLabel;
     private Deck deck;
     private boolean side; //true for light side, false for dark side
@@ -47,8 +47,8 @@ public class UnoFlipModelViewFrame extends JFrame {
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
         lowerHalfPanel.add(scrollPane, BorderLayout.CENTER);
         messagesPanel = new JPanel(new BorderLayout());
-        messagesTextArea = new JTextArea(10, 30);
-        JScrollPane messagesScrollPane = new JScrollPane(messagesTextArea);
+        messagesTextLabel = new JLabel("Pick a card to play or draw a card");
+        JScrollPane messagesScrollPane = new JScrollPane(messagesTextLabel);
         messagesPanel.add(messagesScrollPane, BorderLayout.CENTER);
         lowerHalfPanel.add(messagesPanel, BorderLayout.WEST);
         imageLabel = null;
@@ -150,8 +150,7 @@ public class UnoFlipModelViewFrame extends JFrame {
      * Update status message panel.
      */
     public void updateMessages(String message) {
-        messagesTextArea.setText("");
-        messagesTextArea.append(message + "\n");
+        messagesTextLabel.setText(message);
         if (imageLabel != null) {
             messagesPanel.remove(imageLabel);
             messagesPanel.revalidate();
@@ -165,13 +164,12 @@ public class UnoFlipModelViewFrame extends JFrame {
      * @param drawnCard the card drawn.
      */
     public void updateDrawCardMessagePanel(String message, Card drawnCard) {
-        messagesTextArea.setText("");
-        messagesTextArea.append(message + "\n");
+        messagesTextLabel.setText(message);
 
         if (drawnCard != null) {
             ImageIcon cardImage = loadImagePath(drawnCard);
             imageLabel = new JLabel(cardImage);
-            messagesPanel.add(imageLabel, BorderLayout.NORTH);
+            messagesPanel.add(imageLabel, BorderLayout.SOUTH);
             messagesPanel.revalidate();
             messagesPanel.repaint();
         }

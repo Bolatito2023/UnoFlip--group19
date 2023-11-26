@@ -151,8 +151,9 @@ public class UnoFlipModel {
         view.updateDrawCardMessagePanel("Player " + currentPlayer.getPlayerName() + " drew card: ", drawnCard);
         view.nextPlayerButton(true);
         view.drawCardButton(false);
-        view.cardButtons(false);
+
         view.update();
+        view.cardButtons(false);
     }
 
     /**
@@ -204,9 +205,10 @@ public class UnoFlipModel {
         currentCard = new Card(colour, Card.CardType.WILD);
         view.nextPlayerButton(true);
         view.drawCardButton(false);
-        view.cardButtons(false);
+
         view.updateMessages(colour + " has been chosen.");
         view.update();
+        view.cardButtons(false);
     }
 
     /**
@@ -220,13 +222,14 @@ public class UnoFlipModel {
         currentCard = selectedCard;
         view.nextPlayerButton(true);
         view.drawCardButton(false);
-        view.cardButtons(false);
+
         String flipMessage;
         if (side) { flipMessage = "Light";}
         else { flipMessage = "Dark";}
         view.updateMessages("Cards are now flipped to " + flipMessage);
         view.update();
         System.out.println("cards flipped");
+        view.cardButtons(false);
     }
 
     /**
@@ -258,9 +261,10 @@ public class UnoFlipModel {
         }
         view.nextPlayerButton(true);
         view.drawCardButton(false);
-        view.cardButtons(false);
+
         view.updateMessages("Player " + nextPlayer.getPlayerName() + " must draw 5 cards.");
         view.update();
+        view.cardButtons(false);
     }
 
     /**
@@ -286,8 +290,9 @@ public class UnoFlipModel {
         view.nextPlayerButton(true);
         view.drawCardButton(false);
         view.updateMessages(currentCard.getDarkColour() + " has been chosen. Player " + nextPlayer.getPlayerName() + " has to draw cards until they get a matching colour.");
-        view.cardButtons(false);
+
         view.update();
+        view.cardButtons(false);
     }
 
     /**
@@ -305,9 +310,10 @@ public class UnoFlipModel {
         nextPlayer.drawCard(deck.draw());
         view.nextPlayerButton(true);
         view.drawCardButton(false);
-        view.cardButtons(false);
+
         view.updateMessages("Player " + nextPlayer.getPlayerName() + " must draw a card.");
         view.update();
+        view.cardButtons(false);
     }
     /**
      * Handles playing a Skip card. If the card matches the color of the top card,
@@ -324,8 +330,9 @@ public class UnoFlipModel {
             currentPlayerIndex = (currentPlayerIndex + (direction ? 1 : -1) + players.size()) % players.size();
             view.nextPlayerButton(true);
             view.drawCardButton(false);
-            view.cardButtons(false);
+
             view.update();
+            view.cardButtons(false);
         } else {
             view.updateMessages("Invalid play. The card must match the color of the top card.");
         }
@@ -346,8 +353,9 @@ public class UnoFlipModel {
             this.direction = !direction;
             view.nextPlayerButton(true);
             view.drawCardButton(false);
-            view.cardButtons(false);
+
             view.update();
+            view.cardButtons(false);
         } else {
             view.updateMessages("Invalid play. The card must match the color of the top card.");
 
@@ -374,8 +382,9 @@ public class UnoFlipModel {
         view.nextPlayerButton(true);
         view.drawCardButton(false);
         view.updateMessages(colour + " has been chosen. Player " + nextPlayer.getPlayerName() + " must draw 2 cards.");
-        view.cardButtons(false);
+
         view.update();
+        view.cardButtons(false);
     }
 
     /**
@@ -390,8 +399,9 @@ public class UnoFlipModel {
         currentCard = selectedCard;
         view.nextPlayerButton(true);
         view.drawCardButton(false);
-        view.cardButtons(false);
+
         view.update();
+        view.cardButtons(false);
 
     }
 
