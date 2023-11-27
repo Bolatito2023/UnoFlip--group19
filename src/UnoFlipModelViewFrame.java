@@ -200,7 +200,7 @@ public class UnoFlipModelViewFrame extends JFrame {
                 imagePath = "unoCards/Dark/" + card.toString(side).toLowerCase() + ".png";
             }
         }
-        System.out.println(imagePath);
+        //System.out.println(imagePath);
         imagePath = imagePath.replaceAll(" ", "_");
         ImageIcon CardImage = new ImageIcon(imagePath);
 
@@ -260,7 +260,7 @@ public class UnoFlipModelViewFrame extends JFrame {
         deck.giveDeck();
         deck.shuffle();
 
-        UnoFlipModel unoGame = new UnoFlipModel(numPlayers, numAIPlayers-1, deck);
+        UnoFlipModel unoGame = new UnoFlipModel(numPlayers, numAIPlayers, deck);
         UnoFlipModelViewFrame view = new UnoFlipModelViewFrame(unoGame);
         view.setVisible(true);
     }

@@ -49,7 +49,7 @@ public class UnoFlipModel {
             players.add(player);
         }
 
-        for (int i = 1; i <= numPlayers; i++) {
+        for (int i = 1; i <= numAIPlayers; i++) {
             String playerName = "AI " + i;
             UnoPlayerAI playerAI = new UnoPlayerAI(playerName, deck, this);
             players.add(playerAI);
@@ -63,7 +63,6 @@ public class UnoFlipModel {
      */
     public boolean isValidUnoPlay(Card card) {
         boolean isvalid;
-        System.out.println(side);
         if (side) {
             if (card.getColour() == Card.Colour.NONE){
                 isvalid = card.getColour() == currentCard.getColour() || card.getCardType() == currentCard.getCardType();
@@ -80,7 +79,6 @@ public class UnoFlipModel {
                 isvalid = card.getDarkColour() == currentCard.getDarkColour() || card.getNumber() == currentCard.getNumber();
             }
         }
-        System.out.println(isvalid);
         return isvalid;
     }
 
@@ -399,7 +397,7 @@ public class UnoFlipModel {
      * @param selectedCard  The card to play.
      */
     public void handleValidPlay(UnoPlayer currentPlayer, Card selectedCard) {
-        System.out.println("Player " + currentPlayer.getPlayerName() + " plays: " + selectedCard.toString(side));
+        view.updateDrawCardMessagePanel("Player " + currentPlayer.getPlayerName() + " plays: ", selectedCard);
         currentPlayer.playCard(selectedCard);
         currentCard = selectedCard;
         view.nextPlayerButton(true);
@@ -426,9 +424,21 @@ public class UnoFlipModel {
     public UnoPlayer getNextCurrentPlayer() {
         currentPlayerIndex = (currentPlayerIndex + (direction ? 1 : -1) + players.size()) % players.size();
         view.update();
-        if (currentPlayer instanceof UnoPlayerAI){
-            ((UnoPlayerAI) currentPlayer).playRandomValidCard();
+
+        if (players.get(currentPlayerIndex) instanceof UnoPlayerAI){
+            JOptionPane.showMessageDialog(null, "A bot is playing");
+            view.nextPlayerButton(false);
+            view.drawCardButton(false);
+            view.cardButtons(false);
+            JOptionPane.showMessageDialog(null, "A bot is playing");
+            //((UnoPlayerAI) currentPlayer).playRandomValidCard();
+            ((UnoPlayerAI) players.get(currentPlayerIndex)).handleBotDecision();
+
         }
+
+        view.nextPlayerButton(true);
+        view.drawCardButton(false);
+        view.update();
         return currentPlayer;
     }
 

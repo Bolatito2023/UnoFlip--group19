@@ -84,10 +84,10 @@ public class Hand {
      * Return a string rendering of this Hand. See Card::toString() for
      * notes about how individual cards are rendered.
      */
-    public String toString() {
+    public String toString(boolean side) {
         StringBuilder str = new StringBuilder();
         for (int i = 0; i < cards.size(); i++) {
-            str.append(cards.get(i).toString());
+            str.append(cards.get(i).toString(side));
             if (i < cards.size() - 1) {
                 str.append(", ");
             }
