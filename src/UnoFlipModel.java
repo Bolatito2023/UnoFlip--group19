@@ -426,14 +426,14 @@ public class UnoFlipModel {
         view.update();
 
         if (players.get(currentPlayerIndex) instanceof UnoPlayerAI){
-            JOptionPane.showMessageDialog(null, "A bot is playing");
+            JOptionPane.showMessageDialog(null, "Bot is playing");
             view.nextPlayerButton(false);
             view.drawCardButton(false);
             view.cardButtons(false);
-            JOptionPane.showMessageDialog(null, "A bot is playing");
+
             //((UnoPlayerAI) currentPlayer).playRandomValidCard();
             ((UnoPlayerAI) players.get(currentPlayerIndex)).handleBotDecision();
-
+            JOptionPane.showMessageDialog(null, "Bot finished playing");
         }
 
         view.nextPlayerButton(true);

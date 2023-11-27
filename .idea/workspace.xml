@@ -10,12 +10,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="bed4e951-0f91-4b16-99dd-52d3a0ffa571" name="Changes" comment="AI player attempt">
-      <change afterPath="$PROJECT_DIR$/.idea/artifacts/UnoFlip_game_jar3.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/ChatGPT.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Hand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Hand.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/UnoFlipModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/UnoFlipModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/UnoFlipModelViewFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/UnoFlipModelViewFrame.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/UnoPlayerAI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/UnoPlayerAI.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -33,7 +29,6 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
     <option name="ROOT_SYNC" value="SYNC" />
-    <option name="UPDATE_TYPE" value="REBASE" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -276,7 +271,15 @@
       <option name="project" value="LOCAL" />
       <updated>1700974644956</updated>
     </task>
-    <option name="localTasksCounter" value="23" />
+    <task id="LOCAL-00023" summary="AI player attempt">
+      <option name="closed" value="true" />
+      <created>1701059993139</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1701059993139</updated>
+    </task>
+    <option name="localTasksCounter" value="24" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
