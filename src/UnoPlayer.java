@@ -20,14 +20,16 @@ public class UnoPlayer {
         this.hand = new Hand();
         this.score = 0;
         this.deck = deck;
-        // Draw 7 cards from the deck and add them to the player's hand
-        for (int i = 0; i < 7; i++) {
-            hand.addCard(this.deck.draw());
-        }
+        dealCards();         // Draw 7 cards from the deck and add them to the player's hand
         this.unoCalled = false;  // Uno is initially not called
         this.remindedUno = false; // Reminder is initially not displayed
     }
 
+    public void dealCards() {
+        for (int i = 0; i < 7; i++) {
+            hand.addCard(this.deck.draw());
+        }
+    }
     /**
      * Plays a card from the player's hand.
      * @param card the card to be played
@@ -79,8 +81,11 @@ public class UnoPlayer {
     /**
      * Clear's cards in player's hand.
      */
-    public void resetHand() {
-        hand.clear();
+    public void clearHand(int cardIndex) {
+        Card c = hand.getCards().get(cardIndex);
+        //System.out.println(c.toString(true));
+        hand.removeCard(c);
+        deck.discard(c);
     }
 
     /**

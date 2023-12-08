@@ -25,7 +25,7 @@ public class UnoPlayerAI extends UnoPlayer {
         str.append(checkHand());
         str.append(". The card currently in play is a " + model.getTopCard().toString(model.getSide()));
         str.append(". What card do you play? Give only the name of the card as your response, or say DRAW CARD if you cannot play");
-        //System.out.println(str);
+        System.out.println(str);
         //System.out.println(gptBot.ask(str.toString()));
         return gptBot.ask(str.toString());
 
@@ -38,7 +38,7 @@ public class UnoPlayerAI extends UnoPlayer {
         str.append(". The card currently in play is a " + model.getTopCard().toString(model.getSide()));
         str.append(". Suppose you played your WILD card. What colour would you pick? Your have the following options: RED, GREEN, YELLOW, BLUE. " +
                 "Give only the name of the colour as your response");
-        //System.out.println(str);
+        System.out.println(str);
         //System.out.println(gptBot.ask(str.toString()));
         return gptBot.ask(str.toString());
     }

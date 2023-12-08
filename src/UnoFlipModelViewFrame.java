@@ -1,5 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class UnoFlipModelViewFrame extends JFrame {
     private JButton drawButton;
@@ -14,6 +16,9 @@ public class UnoFlipModelViewFrame extends JFrame {
     private JLabel imageLabel;
     private Deck deck;
     private boolean side; //true for light side, false for dark side
+
+    private static int numPlayers;
+    private static int numAIPlayers;
 
     /**
      * Constructs a viewer for UnoFlip.
@@ -33,6 +38,8 @@ public class UnoFlipModelViewFrame extends JFrame {
         currentPlayerLabel = new JLabel();
         currentPlayerPanel.add(currentPlayerLabel);
         upperHalfPanel.add(currentPlayerPanel, BorderLayout.WEST);
+
+        createMenuBar();
 
         JPanel topCardPanel = new JPanel();
         topCardLabel = new JLabel();
@@ -68,6 +75,43 @@ public class UnoFlipModelViewFrame extends JFrame {
         gameModel.addView(this);
         update();
     }
+
+
+    private void createMenuBar() {
+        JMenuBar menuBar = new JMenuBar();
+        setJMenuBar(menuBar);
+        JMenu gameMenu = new JMenu("Menu");
+
+        JMenuItem UndoMenuItem = new JMenuItem("Undo");
+        JMenuItem RedoMenuItem = new JMenuItem("Redo");
+        JMenuItem ReplayMenuItem = new JMenuItem("Replay");
+        JMenuItem SaveMenuItem = new JMenuItem("Save Game");
+        JMenuItem LoadMenuItem = new JMenuItem("Load Game");
+
+        gameMenu.add(UndoMenuItem);
+        gameMenu.add(RedoMenuItem);
+        gameMenu.add(ReplayMenuItem);
+        gameMenu.add(SaveMenuItem);
+        gameMenu.add(LoadMenuItem);
+
+        menuBar.add(gameMenu);
+
+        ReplayMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                resetGame();
+            }
+        });
+    }
+
+    private void resetGame() {
+        int result = JOptionPane.showConfirmDialog((Component) null, "Do you want to restart the game?",
+                "Replay Confirmation", JOptionPane.YES_NO_OPTION);
+        if (result == 0) {
+            gameModel.resetPlayerHands();
+        }
+    }
+
     public void nextPlayerButton(Boolean bool){
         this.nextPlayerButton.setEnabled(bool);
     }
@@ -216,7 +260,6 @@ public class UnoFlipModelViewFrame extends JFrame {
                 "How many players? (2-4)",
                 "Number of Players",
                 JOptionPane.QUESTION_MESSAGE);
-        int numPlayers = 0;
         try {
             numPlayers = Integer.parseInt(numPlayersStr);
             if (numPlayers < 2 || numPlayers > 4) {
@@ -237,7 +280,6 @@ public class UnoFlipModelViewFrame extends JFrame {
                 "How many AI players? (0-10)",
                 "Number of AI Players",
                 JOptionPane.QUESTION_MESSAGE);
-        int numAIPlayers = 0;
         try {
             numAIPlayers = Integer.parseInt(numAIPlayersStr);
             if (numAIPlayers < 0 || numAIPlayers > 10) {

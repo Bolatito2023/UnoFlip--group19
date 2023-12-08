@@ -56,6 +56,20 @@ public class UnoFlipModel {
         }
     }
 
+    public void resetPlayerHands() {
+        for(UnoPlayer p : players) {
+            int numCards = p.getHand().handSize();
+            for (int i=(numCards-1); i>=0; i--) {
+                p.clearHand(i);
+            }
+        }
+        deck.reAdd();
+        for(UnoPlayer p : players) {
+            p.dealCards();
+        }
+        view.update();
+    }
+
     /**
      * Checks if the card can be played.
      * @param card The card to be checked.
