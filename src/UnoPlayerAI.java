@@ -15,6 +15,14 @@ public class UnoPlayerAI extends UnoPlayer {
         this.model = gameModel;
     }
 
+    @Override
+    public void playCard(Card card){
+        if (hand.contains(card)){
+            hand.removeCard(card);
+            deck.discard(card);
+        }
+    }
+
     private String checkHand() {
         return getHand().toString(model.getSide());
     }
@@ -60,8 +68,9 @@ public class UnoPlayerAI extends UnoPlayer {
     }
 
     public void handleBotDecision() {
-        System.out.println(getHand().getCards());
+        System.out.println(checkHand());
         String botDecision = askChatGPT();
+        System.out.println("ChatGPT Response: " + botDecision);
 
         JOptionPane.showMessageDialog(null, "AI wants to play: " + botDecision);
 
@@ -71,6 +80,7 @@ public class UnoPlayerAI extends UnoPlayer {
             for (Card c : getHand().getCards()) {
                 if (c.toString(model.getSide()).equals(botDecision)) {
                     JOptionPane.showMessageDialog(null, "Card in Hand: " + c.toString(model.getSide()));
+
                     if (model.getSide()) {
                         if (c.getCardType() == Card.CardType.WILD) {
                             model.handleWildCard(getBotColour(), this, c);

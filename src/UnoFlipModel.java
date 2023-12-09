@@ -7,12 +7,14 @@ public class UnoFlipModel {
 
     private List<UnoPlayer> players;
     private Card currentCard;
-    private Deck deck;
+    public Deck deck;
     private boolean side; //true for light side, false for dark side
     private int currentPlayerIndex;
     private int roundNumber;
     UnoFlipModelViewFrame view;
     private UnoPlayer currentPlayer;
+    private Card lastTopCard;
+    private Card lastSelectedCard;
 
     /**
      * Constructs an UnoFlip game model.
@@ -411,15 +413,40 @@ public class UnoFlipModel {
      * @param selectedCard  The card to play.
      */
     public void handleValidPlay(UnoPlayer currentPlayer, Card selectedCard) {
+        this.currentPlayer = currentPlayer;
         view.updateDrawCardMessagePanel("Player " + currentPlayer.getPlayerName() + " plays: ", selectedCard);
         currentPlayer.playCard(selectedCard);
+        lastTopCard = currentCard;
         currentCard = selectedCard;
+        view.setUndoMenuItem(true);
         view.nextPlayerButton(true);
         view.drawCardButton(false);
 
         view.update();
         view.cardButtons(false);
+    }
 
+    public void handleUndo(){
+        view.updateMessages("Player " + currentPlayer.getPlayerName() + " undoes turn.");
+        lastSelectedCard = currentCard;
+        currentCard = lastTopCard;
+        currentPlayer.undoPlay();
+        view.setUndoMenuItem(false);
+        view.setRedoMenuItem(true);
+        view.update();
+    }
+
+    public void handleRedo(){
+        view.updateMessages("Player " + currentPlayer.getPlayerName() + " redoes turn.");
+        currentCard = lastSelectedCard;
+        currentPlayer.redoPlay();
+        view.setUndoMenuItem(true);
+        view.setRedoMenuItem(false);
+        view.nextPlayerButton(true);
+        view.drawCardButton(false);
+
+        view.update();
+        view.cardButtons(false);
     }
 
     /**

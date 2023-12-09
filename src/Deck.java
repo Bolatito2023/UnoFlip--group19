@@ -113,7 +113,9 @@ public class Deck {
      * remix operation.
      */
     public void discard(Card c) {
-        discardedCards.add(c);
+        if (c != null){
+            discardedCards.add(c);
+        }
     }
 
     /**

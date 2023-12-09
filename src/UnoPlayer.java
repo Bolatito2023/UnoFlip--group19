@@ -3,12 +3,12 @@ import java.util.List;
 
 public class UnoPlayer {
     private String playerName;
-    private Hand hand;
-    private Deck deck;
+    protected Hand hand;
+    protected Deck deck;
     private int score;              // Player's score
     private boolean unoCalled;      // Indicates whether Uno has been called by the player
     private boolean remindedUno;    // Indicates whether Uno reminder has been displayed
-
+    private Card wantToPlay = null;
 
     /**
      * Constructs new player UnoPlayer.
@@ -37,9 +37,20 @@ public class UnoPlayer {
     public void playCard(Card card){
         if (hand.contains(card)){
             hand.removeCard(card);
-            deck.discard(card);
+            wantToPlay = card;
         }
+    }
 
+    public void confirmPlay(){
+        deck.discard(wantToPlay);
+    }
+
+    public void undoPlay(){
+        hand.addCard(wantToPlay);
+    }
+
+    public void redoPlay(){
+        playCard(wantToPlay);
     }
 
     /**
