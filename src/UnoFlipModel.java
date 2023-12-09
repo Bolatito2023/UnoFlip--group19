@@ -220,6 +220,7 @@ public class UnoFlipModel {
      * @param selectedCard  The Wild card to play.
      */
     public void handleWildCard(Card.Colour colour, UnoPlayer currentPlayer, Card selectedCard) {
+        playCard(currentPlayer);
         currentPlayer.playCard(selectedCard);
         currentCard = new Card(colour, Card.CardType.WILD);
         view.nextPlayerButton(true);
@@ -236,6 +237,7 @@ public class UnoFlipModel {
      * @param selectedCard  The Flip card to play.
      */
     public void handleFlipCard(UnoPlayer currentPlayer, Card selectedCard) {
+        playCard(currentPlayer);
         side = !side;
         currentPlayer.playCard(selectedCard);
         currentCard = selectedCard;
@@ -257,6 +259,7 @@ public class UnoFlipModel {
      * @param selectedCard  The Skip Everyone card to play.
      */
     public void handleSkipEveryoneCard(UnoPlayer currentPlayer, Card selectedCard) {
+        playCard(currentPlayer);
         currentPlayer.playCard(selectedCard);
         currentCard = selectedCard;
         view.updateMessages("All players are skipped.");
@@ -270,6 +273,7 @@ public class UnoFlipModel {
      * @param direction     The direction of play.
      */
     public void handleDrawFive(UnoPlayer currentPlayer, Card selectedCard, boolean direction) {
+        playCard(currentPlayer);
         currentPlayer.playCard(selectedCard);
         currentCard = selectedCard;
 
@@ -295,6 +299,7 @@ public class UnoFlipModel {
      * @param direction     The direction of play.
      */
     public void handleWildDrawColourCard(Card.Colour colour, UnoPlayer currentPlayer, Card selectedCard, boolean direction) {
+        playCard(currentPlayer);
         currentPlayer.playCard(selectedCard);
         currentCard = new Card(colour, Card.CardType.WILD_DRAW_TWO);
 
@@ -321,6 +326,7 @@ public class UnoFlipModel {
      * @param direction     The direction of play.
      */
     public void handleDrawOne(UnoPlayer currentPlayer, Card selectedCard, boolean direction) {
+        playCard(currentPlayer);
         currentPlayer.playCard(selectedCard);
         currentCard = selectedCard;
 
@@ -343,6 +349,7 @@ public class UnoFlipModel {
      * @param direction     The direction of play.
      */
     public void handleSkipCard(UnoPlayer currentPlayer, Card selectedCard, boolean direction) {
+        playCard(currentPlayer);
         if (selectedCard.getColour() == currentCard.getColour() || currentCard.getCardType() == Card.CardType.SKIP) {
             currentPlayer.playCard(selectedCard);
             currentCard = selectedCard;
@@ -366,6 +373,7 @@ public class UnoFlipModel {
      * @param direction     The direction of play.
      */
     public void handleReverseCard(UnoPlayer currentPlayer, Card selectedCard, boolean direction) {
+        playCard(currentPlayer);
         if (selectedCard.getColour() == currentCard.getColour() || currentCard.getCardType() == Card.CardType.REVERSE) {
             currentPlayer.playCard(selectedCard);
             currentCard = selectedCard;
@@ -391,6 +399,7 @@ public class UnoFlipModel {
      * @param direction     The direction of play.
      */
     public void handleWildDrawTwoCards(Card.Colour colour, UnoPlayer currentPlayer, Card selectedCard, boolean direction) {
+        playCard(currentPlayer);
         currentPlayer.playCard(selectedCard);
         currentCard = new Card(colour, Card.CardType.WILD_DRAW_TWO);
 
@@ -413,17 +422,24 @@ public class UnoFlipModel {
      * @param selectedCard  The card to play.
      */
     public void handleValidPlay(UnoPlayer currentPlayer, Card selectedCard) {
-        this.currentPlayer = currentPlayer;
+        playCard(currentPlayer);
         view.updateDrawCardMessagePanel("Player " + currentPlayer.getPlayerName() + " plays: ", selectedCard);
         currentPlayer.playCard(selectedCard);
-        lastTopCard = currentCard;
+
         currentCard = selectedCard;
-        view.setUndoMenuItem(true);
+
         view.nextPlayerButton(true);
         view.drawCardButton(false);
 
         view.update();
         view.cardButtons(false);
+    }
+
+    private void playCard(UnoPlayer player) {
+        currentPlayer = player;
+        lastTopCard = currentCard;
+        view.setUndoMenuItem(true);
+        view.setRedoMenuItem(false);
     }
 
     public void handleUndo(){
