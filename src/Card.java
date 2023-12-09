@@ -15,7 +15,7 @@ public class Card {
 
     public enum DarkCardType {NUMBER, DRAW_FIVE, REVERSE, SKIP_EVERYONE, FLIP, WILD, WILD_DRAW_COLOUR}
 
-    public enum Number {ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE}
+    public enum Number {ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, NULL}
 
     private Colour colour;
     private DarkColour darkColour;
@@ -33,6 +33,7 @@ public class Card {
     public Card(Colour colour, CardType card) {
         this.colour = colour;
         this.cardT = card;
+        this.num = Number.NULL;
         this.darkColour = initializeDarkColour(colour);
         this.darkCardT = initializeDarkType(card);
     }

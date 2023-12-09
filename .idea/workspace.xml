@@ -9,9 +9,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="bed4e951-0f91-4b16-99dd-52d3a0ffa571" name="Changes" comment="Added serialization and deserialization (credit to Renua)">
-      <change beforePath="$PROJECT_DIR$/UnoFlip game.iml" beforeDir="false" afterPath="$PROJECT_DIR$/UnoFlip game.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/UnoFlipModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/UnoFlipModel.java" afterDir="false" />
+    <list default="true" id="bed4e951-0f91-4b16-99dd-52d3a0ffa571" name="Changes" comment="Added serialization and deserialization in viewframe menu buttons">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Card.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Card.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/UnoFlipModelViewFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/UnoFlipModelViewFrame.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -318,7 +318,15 @@
       <option name="project" value="LOCAL" />
       <updated>1702094492027</updated>
     </task>
-    <option name="localTasksCounter" value="29" />
+    <task id="LOCAL-00029" summary="Added serialization and deserialization in viewframe menu buttons">
+      <option name="closed" value="true" />
+      <created>1702095184531</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1702095184531</updated>
+    </task>
+    <option name="localTasksCounter" value="30" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -333,7 +341,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Changed SDK" />
     <MESSAGE value="Added UnoFlipController. Made changes to all classes" />
     <MESSAGE value="added javadoc comments to Card" />
     <MESSAGE value="added javadoc comments to Hand" />
@@ -358,6 +365,7 @@
     <MESSAGE value="Added undo and redo functionality" />
     <MESSAGE value="Revert changes" />
     <MESSAGE value="Added serialization and deserialization (credit to Renua)" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added serialization and deserialization (credit to Renua)" />
+    <MESSAGE value="Added serialization and deserialization in viewframe menu buttons" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added serialization and deserialization in viewframe menu buttons" />
   </component>
 </project>

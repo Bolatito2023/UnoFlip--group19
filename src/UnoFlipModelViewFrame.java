@@ -161,11 +161,15 @@ public class UnoFlipModelViewFrame extends JFrame {
     }
 
     private void saveGame() throws IOException {
-        gameModel.saveGameStateToJson("unosave.txt");
+        String fileName = JOptionPane.showInputDialog("Enter export JSON file name:");
+        fileName = fileName + ".json";
+        gameModel.saveGameStateToJson(fileName);
     }
 
     private void loadGame() throws IOException {
-        gameModel.restoreGameStateFromJson("unosave.txt");
+        String fileName = JOptionPane.showInputDialog("Enter import JSON file name:");
+        fileName = fileName + ".json";
+        gameModel.restoreGameStateFromJson(fileName);
     }
 
     public void setUndoMenuItem(Boolean bool){
