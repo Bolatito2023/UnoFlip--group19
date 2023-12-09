@@ -20,6 +20,9 @@ public class UnoFlipModelViewFrame extends JFrame {
     private static int numPlayers;
     private static int numAIPlayers;
 
+    JMenuItem UndoMenuItem;
+    JMenuItem RedoMenuItem;
+
     /**
      * Constructs a viewer for UnoFlip.
      * @param game the UnoFlip game being played.
@@ -76,14 +79,16 @@ public class UnoFlipModelViewFrame extends JFrame {
         update();
     }
 
-
+    /**
+     * Create menu bar for Milestone 4 functionalities
+     */
     private void createMenuBar() {
         JMenuBar menuBar = new JMenuBar();
         setJMenuBar(menuBar);
         JMenu gameMenu = new JMenu("Menu");
 
-        JMenuItem UndoMenuItem = new JMenuItem("Undo");
-        JMenuItem RedoMenuItem = new JMenuItem("Redo");
+        UndoMenuItem = new JMenuItem("Undo");
+        RedoMenuItem = new JMenuItem("Redo");
         JMenuItem ReplayMenuItem = new JMenuItem("Replay");
         JMenuItem SaveMenuItem = new JMenuItem("Save Game");
         JMenuItem LoadMenuItem = new JMenuItem("Load Game");
@@ -96,6 +101,23 @@ public class UnoFlipModelViewFrame extends JFrame {
 
         menuBar.add(gameMenu);
 
+        UndoMenuItem.setEnabled(false);
+        RedoMenuItem.setEnabled(false);
+        UndoMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                nextPlayerButton.setEnabled(false);
+                drawButton.setEnabled(true);
+                cardButtons(true);
+                gameModel.handleUndo();
+            }
+        });
+        RedoMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                gameModel.handleRedo();
+            }
+        });
         ReplayMenuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -104,20 +126,31 @@ public class UnoFlipModelViewFrame extends JFrame {
         });
     }
 
+    /**
+     * Resets the game if the "Replay" menu button is pressed
+     */
     private void resetGame() {
         int result = JOptionPane.showConfirmDialog((Component) null, "Do you want to restart the game?",
                 "Replay Confirmation", JOptionPane.YES_NO_OPTION);
         if (result == 0) {
             gameModel.resetPlayerHands();
+            gameModel.resetTopCard();
+            update();
         }
     }
 
+    public void setUndoMenuItem(Boolean bool){
+        UndoMenuItem.setEnabled(bool);
+    }
+    public void setRedoMenuItem(Boolean bool){
+        RedoMenuItem.setEnabled(bool);
+    }
     public void nextPlayerButton(Boolean bool){
-        this.nextPlayerButton.setEnabled(bool);
+        nextPlayerButton.setEnabled(bool);
     }
 
     public void drawCardButton(Boolean bool){
-        this.drawButton.setEnabled(bool);
+        drawButton.setEnabled(bool);
     }
 
     public void cardButtons(Boolean bool){

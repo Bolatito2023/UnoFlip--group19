@@ -1,8 +1,5 @@
 import javax.swing.*;
-import javax.json.Json;
-import javax.json.JsonArrayBuilder;
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
+
 
 public class UnoPlayerAI extends UnoPlayer {
     UnoFlipModel model;
@@ -17,6 +14,14 @@ public class UnoPlayerAI extends UnoPlayer {
     public UnoPlayerAI(String name, Deck deck, UnoFlipModel gameModel) {
         super(name, deck);
         this.model = gameModel;
+    }
+
+    @Override
+    public void playCard(Card card){
+        if (hand.contains(card)){
+            hand.removeCard(card);
+            deck.discard(card);
+        }
     }
 
     private String checkHand() {
@@ -64,8 +69,9 @@ public class UnoPlayerAI extends UnoPlayer {
     }
 
     public void handleBotDecision() {
-        System.out.println(getHand().getCards());
+        System.out.println(checkHand());
         String botDecision = askChatGPT();
+        System.out.println("ChatGPT Response: " + botDecision);
 
         JOptionPane.showMessageDialog(null, "AI wants to play: " + botDecision);
 
@@ -75,58 +81,59 @@ public class UnoPlayerAI extends UnoPlayer {
             for (Card c : getHand().getCards()) {
                 if (c.toString(model.getSide()).equals(botDecision)) {
                     JOptionPane.showMessageDialog(null, "Card in Hand: " + c.toString(model.getSide()));
+
                     if (model.getSide()) {
                         if (c.getCardType() == Card.CardType.WILD) {
-                            model.handleWildCard(getBotColour(), this, c);
+                            model.handleWildCard(getBotColour(), c);
                             break;
                         }
                         if (c.getCardType() == Card.CardType.WILD_DRAW_TWO) {
-                            model.handleWildDrawTwoCards(getBotColour(), this, c, model.getDirection());
+                            model.handleWildDrawTwoCards(getBotColour(), c, model.getDirection());
                             break;
                         }
                         if (c.getCardType() == Card.CardType.SKIP && c.getColour() == model.getTopCard().getColour()) {
-                            model.handleSkipCard(this, c, model.getDirection());
+                            model.handleSkipCard(c, model.getDirection());
                             break;
                         }
                         if (c.getCardType() == Card.CardType.REVERSE && c.getColour() == model.getTopCard().getColour()) {
-                            model.handleReverseCard(this, c, model.getDirection());
+                            model.handleReverseCard(c, model.getDirection());
                             break;
                         }
                         if (c.getCardType() == Card.CardType.FLIP && c.getColour() == model.getTopCard().getColour()) {
-                            model.handleFlipCard(this, c);
+                            model.handleFlipCard(c);
                             break;
                         }
                         if (model.isValidUnoPlay(c)) {
-                            model.handleValidPlay(this, c);
+                            model.handleValidPlay(c);
                             break;
                         }
                     } else {
                         if (c.getCardDarkType() == Card.DarkCardType.SKIP_EVERYONE && c.getDarkColour() == model.getTopCard().getDarkColour()) {
-                            model.handleSkipEveryoneCard(this, c);
+                            model.handleSkipEveryoneCard(c);
                             break;
                         }
                         if (c.getCardDarkType() == Card.DarkCardType.DRAW_FIVE) {
-                            model.handleDrawFive(this, c, model.getDirection());
+                            model.handleDrawFive(c, model.getDirection());
                             break;
                         }
                         if (c.getCardDarkType() == Card.DarkCardType.FLIP && c.getDarkColour() == model.getTopCard().getDarkColour()) {
-                            model.handleFlipCard(this, c);
+                            model.handleFlipCard(c);
                             break;
                         }
                         if (c.getCardDarkType() == Card.DarkCardType.REVERSE && c.getDarkColour() == model.getTopCard().getDarkColour()) {
-                            model.handleReverseCard(this, c, model.getDirection());
+                            model.handleReverseCard(c, model.getDirection());
                             break;
                         }
                         if (c.getCardDarkType() == Card.DarkCardType.WILD) {
-                            model.handleWildCard(chooseDarkColour(), this, c);
+                            model.handleWildCard(chooseDarkColour(), c);
                             break;
                         }
                         if (c.getCardDarkType() == Card.DarkCardType.WILD_DRAW_COLOUR) {
-                            model.handleWildDrawColourCard(chooseDarkColour(), this, c, model.getDirection());
+                            model.handleWildDrawColourCard(chooseDarkColour(), c, model.getDirection());
                             break;
                         }
                         if (model.isValidUnoPlay(c)) {
-                            model.handleValidPlay(this, c);
+                            model.handleValidPlay(c);
                             break;
                         }
                     }
@@ -184,22 +191,5 @@ public class UnoPlayerAI extends UnoPlayer {
                 JOptionPane.showMessageDialog(null, "You must choose a colour.");
             }
         }
-    }
-
-    public JsonObject saveAttributesToJson() {
-        JsonArrayBuilder handArrayBuilder = Json.createArrayBuilder();
-
-        // Serialize hand
-        for (Card card : getHand().getCards()) {
-            handArrayBuilder.add(card.saveAttributesToJson());
-        }
-
-        return Json.createObjectBuilder()
-                .add("playerName", getPlayerName())
-
-                .add("unoCalled", getUnoCalled())
-                .add("remindedUno", hasRemindedUno())
-                .add("hand", handArrayBuilder)
-                .build();
     }
 }

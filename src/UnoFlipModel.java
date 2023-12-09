@@ -1,10 +1,5 @@
 import javax.swing.*;
 import java.util.*;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import javax.json.*;
-import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
 public class UnoFlipModel {
     boolean direction = true;
 
@@ -12,12 +7,14 @@ public class UnoFlipModel {
 
     private List<UnoPlayer> players;
     private Card currentCard;
-    private Deck deck;
+    public Deck deck;
     private boolean side; //true for light side, false for dark side
     private int currentPlayerIndex;
     private int roundNumber;
     UnoFlipModelViewFrame view;
     private UnoPlayer currentPlayer;
+    private Card lastTopCard;
+    private Card lastSelectedCard;
 
     /**
      * Constructs an UnoFlip game model.
@@ -33,6 +30,14 @@ public class UnoFlipModel {
         this.deck = deck;
         currentCard = deck.draw();
         roundNumber = 1;
+    }
+
+    /**
+     * Resets the initial card in play when game is replayed.
+     */
+    public void resetTopCard(){
+        currentCard = deck.draw(); //Old top card put back in deck with reAdd() call in resetPlayerHands()
+        currentPlayerIndex = 0;
     }
 
     public void addView(UnoFlipModelViewFrame view) {
@@ -61,6 +66,9 @@ public class UnoFlipModel {
         }
     }
 
+    /**
+     * Clears each player's hand and deals new cards to them
+     */
     public void resetPlayerHands() {
         for(UnoPlayer p : players) {
             int numCards = p.getHand().handSize();
@@ -72,7 +80,6 @@ public class UnoFlipModel {
         for(UnoPlayer p : players) {
             p.dealCards();
         }
-        view.update();
     }
 
     /**
@@ -219,86 +226,67 @@ public class UnoFlipModel {
      * Handles playing a Wild card and allows the player to choose the color.
      *
      * @param colour        The input for the colour chosen.
-     * @param currentPlayer The current player.
      * @param selectedCard  The Wild card to play.
      */
-    public void handleWildCard(Card.Colour colour, UnoPlayer currentPlayer, Card selectedCard) {
-        currentPlayer.playCard(selectedCard);
+    public void handleWildCard(Card.Colour colour, Card selectedCard) {
+        playCard(selectedCard);
         currentCard = new Card(colour, Card.CardType.WILD);
-        view.nextPlayerButton(true);
-        view.drawCardButton(false);
 
         view.updateMessages(colour + " has been chosen.");
         view.update();
-        view.cardButtons(false);
     }
 
     /**
      * Handles playing a Flip card by switching the cards' sides.
-     * @param currentPlayer The current player.
      * @param selectedCard  The Flip card to play.
      */
-    public void handleFlipCard(UnoPlayer currentPlayer, Card selectedCard) {
+    public void handleFlipCard(Card selectedCard) {
+        playCard(selectedCard);
         side = !side;
-        currentPlayer.playCard(selectedCard);
-        currentCard = selectedCard;
-        view.nextPlayerButton(true);
-        view.drawCardButton(false);
 
         String flipMessage;
         if (side) { flipMessage = "Light";}
         else { flipMessage = "Dark";}
         view.updateMessages("Cards are now flipped to " + flipMessage);
         view.update();
-        System.out.println("cards flipped");
-        view.cardButtons(false);
     }
 
     /**
      * Handles playing a Skip Everyone card by allowing the current player to play again.
-     * @param currentPlayer The current player.
      * @param selectedCard  The Skip Everyone card to play.
      */
-    public void handleSkipEveryoneCard(UnoPlayer currentPlayer, Card selectedCard) {
-        currentPlayer.playCard(selectedCard);
-        currentCard = selectedCard;
+    public void handleSkipEveryoneCard(Card selectedCard) {
+        playCard(selectedCard);
         view.updateMessages("All players are skipped.");
         view.update();
     }
 
     /**
      * Handles playing a Draw Five card by forcing the next player to draw five cards and skips their turn.
-     * @param currentPlayer The current player.
      * @param selectedCard  The Draw Five card to play.
      * @param direction     The direction of play.
      */
-    public void handleDrawFive(UnoPlayer currentPlayer, Card selectedCard, boolean direction) {
-        currentPlayer.playCard(selectedCard);
-        currentCard = selectedCard;
+    public void handleDrawFive(Card selectedCard, boolean direction) {
+        playCard(selectedCard);
 
         currentPlayerIndex = (currentPlayerIndex + (direction ? 1 : -1) + players.size()) % players.size();
         UnoPlayer nextPlayer = players.get(currentPlayerIndex);
         for(int i = 0; i < 5; ++i) {
             nextPlayer.drawCard(deck.draw());
         }
-        view.nextPlayerButton(true);
-        view.drawCardButton(false);
-
         view.updateMessages("Player " + nextPlayer.getPlayerName() + " must draw 5 cards.");
         view.update();
-        view.cardButtons(false);
     }
 
     /**
      * Handles playing a Wild Draw Colour card by forcing the next player to draw until
      * they draw a card of the selected colour and skips their turn.
      * @param colour        The corresponding light colour selected for the dark Wild Draw Colour card.
-     * @param currentPlayer The current player.
      * @param selectedCard  The Wild Draw Colour card to play.
      * @param direction     The direction of play.
      */
-    public void handleWildDrawColourCard(Card.Colour colour, UnoPlayer currentPlayer, Card selectedCard, boolean direction) {
-        currentPlayer.playCard(selectedCard);
+    public void handleWildDrawColourCard(Card.Colour colour, Card selectedCard, boolean direction) {
+        playCard(selectedCard);
         currentCard = new Card(colour, Card.CardType.WILD_DRAW_TWO);
 
         currentPlayerIndex = (currentPlayerIndex + (direction ? 1 : -1) + players.size()) % players.size();
@@ -309,52 +297,40 @@ public class UnoFlipModel {
             nextPlayer.drawCard(drawnCard);
         }
         while(currentCard.getDarkColour() != drawnCard.getDarkColour());
-        view.nextPlayerButton(true);
-        view.drawCardButton(false);
         view.updateMessages(currentCard.getDarkColour() + " has been chosen. Player " + nextPlayer.getPlayerName() + " has to draw cards until they get a matching colour.");
 
         view.update();
-        view.cardButtons(false);
     }
 
     /**
      * Handles playing a Draw One card by forcing the next player to draw a card and skips their turn.
-     * @param currentPlayer The current player.
      * @param selectedCard  The Draw One card to play.
      * @param direction     The direction of play.
      */
-    public void handleDrawOne(UnoPlayer currentPlayer, Card selectedCard, boolean direction) {
-        currentPlayer.playCard(selectedCard);
-        currentCard = selectedCard;
+    public void handleDrawOne(Card selectedCard, boolean direction) {
+        playCard(selectedCard);
 
         currentPlayerIndex = (currentPlayerIndex + (direction ? 1 : -1) + players.size()) % players.size();
         UnoPlayer nextPlayer = players.get(currentPlayerIndex);
         nextPlayer.drawCard(deck.draw());
-        view.nextPlayerButton(true);
-        view.drawCardButton(false);
 
         view.updateMessages("Player " + nextPlayer.getPlayerName() + " must draw a card.");
         view.update();
-        view.cardButtons(false);
     }
     /**
      * Handles playing a Skip card. If the card matches the color of the top card,
      * it skips the next player's turn.
      *
-     * @param currentPlayer The current player.
      * @param selectedCard  The Skip card to play.
      * @param direction     The direction of play.
      */
-    public void handleSkipCard(UnoPlayer currentPlayer, Card selectedCard, boolean direction) {
+    public void handleSkipCard(Card selectedCard, boolean direction) {
+        playCard(selectedCard);
         if (selectedCard.getColour() == currentCard.getColour() || currentCard.getCardType() == Card.CardType.SKIP) {
-            currentPlayer.playCard(selectedCard);
-            currentCard = selectedCard;
+            playCard(selectedCard);
             currentPlayerIndex = (currentPlayerIndex + (direction ? 1 : -1) + players.size()) % players.size();
-            view.nextPlayerButton(true);
-            view.drawCardButton(false);
 
             view.update();
-            view.cardButtons(false);
         } else {
             view.updateMessages("Invalid play. The card must match the color of the top card.");
         }
@@ -364,20 +340,15 @@ public class UnoFlipModel {
      * Handles playing a Reverse card. If the card matches the color of the top card,
      * it reverses the direction of play.
      *
-     * @param currentPlayer The current player.
      * @param selectedCard  The Reverse card to play.
      * @param direction     The direction of play.
      */
-    public void handleReverseCard(UnoPlayer currentPlayer, Card selectedCard, boolean direction) {
+    public void handleReverseCard(Card selectedCard, boolean direction) {
         if (selectedCard.getColour() == currentCard.getColour() || currentCard.getCardType() == Card.CardType.REVERSE) {
-            currentPlayer.playCard(selectedCard);
-            currentCard = selectedCard;
+            playCard(selectedCard);
             this.direction = !direction;
-            view.nextPlayerButton(true);
-            view.drawCardButton(false);
 
             view.update();
-            view.cardButtons(false);
         } else {
             view.updateMessages("Invalid play. The card must match the color of the top card.");
 
@@ -389,42 +360,72 @@ public class UnoFlipModel {
      * it forces the next player to draw two cards and skips their turn.
      *
      * @param colour        The input for the colour chosen.
-     * @param currentPlayer The current player.
      * @param selectedCard  The Wild Draw Two Cards to play.
      * @param direction     The direction of play.
      */
-    public void handleWildDrawTwoCards(Card.Colour colour, UnoPlayer currentPlayer, Card selectedCard, boolean direction) {
-        currentPlayer.playCard(selectedCard);
+    public void handleWildDrawTwoCards(Card.Colour colour, Card selectedCard, boolean direction) {
+        playCard(selectedCard);
         currentCard = new Card(colour, Card.CardType.WILD_DRAW_TWO);
 
         currentPlayerIndex = (currentPlayerIndex + (direction ? 1 : -1) + players.size()) % players.size();
         UnoPlayer nextPlayer = players.get(currentPlayerIndex);
         nextPlayer.drawCard(deck.draw());
         nextPlayer.drawCard(deck.draw());
-        view.nextPlayerButton(true);
-        view.drawCardButton(false);
         view.updateMessages(colour + " has been chosen. Player " + nextPlayer.getPlayerName() + " must draw 2 cards.");
 
         view.update();
-        view.cardButtons(false);
     }
 
     /**
      * Handles a valid card play that matches the color or value of the top card.
      *
-     * @param currentPlayer The current player.
      * @param selectedCard  The card to play.
      */
-    public void handleValidPlay(UnoPlayer currentPlayer, Card selectedCard) {
+    public void handleValidPlay(Card selectedCard) {
+        playCard(selectedCard);
         view.updateDrawCardMessagePanel("Player " + currentPlayer.getPlayerName() + " plays: ", selectedCard);
+
+        view.update();
+    }
+
+    public Card getLastSelected(){
+        return lastSelectedCard;
+    }
+    public void playCard(Card selectedCard) {
+        lastSelectedCard = selectedCard;
         currentPlayer.playCard(selectedCard);
+        lastTopCard = currentCard;
         currentCard = selectedCard;
+        view.setUndoMenuItem(true);
+        view.setRedoMenuItem(false);
+
+        view.nextPlayerButton(true);
+        view.drawCardButton(false);
+        view.update();
+        view.cardButtons(false);
+    }
+
+    public void handleUndo(){
+        view.updateMessages("Player " + currentPlayer.getPlayerName() + " undoes turn.");
+        lastSelectedCard = currentCard;
+        currentCard = lastTopCard;
+        currentPlayer.undoPlay();
+        view.setUndoMenuItem(false);
+        view.setRedoMenuItem(true);
+        view.update();
+    }
+
+    public void handleRedo(){
+        view.updateMessages("Player " + currentPlayer.getPlayerName() + " redoes turn.");
+        currentCard = lastSelectedCard;
+        currentPlayer.redoPlay();
+        view.setUndoMenuItem(true);
+        view.setRedoMenuItem(false);
         view.nextPlayerButton(true);
         view.drawCardButton(false);
 
         view.update();
         view.cardButtons(false);
-
     }
 
     /**
@@ -432,7 +433,7 @@ public class UnoFlipModel {
      * @return currentPlayer the current player.
      */
     public UnoPlayer getCurrentPlayer() {
-        UnoPlayer currentPlayer = players.get(currentPlayerIndex);
+        currentPlayer = players.get(currentPlayerIndex);
         return currentPlayer;
     }
 
@@ -480,139 +481,4 @@ public class UnoFlipModel {
     public boolean getSide() {
         return side;
     }
-
-    public void saveGameStateToJson(String fileName) throws IOException {
-        try (PrintWriter writer = new PrintWriter(new FileWriter(fileName))) {
-            JsonObject jsonObject = serializeGameState();
-            writer.println(jsonObject);
-        }
-    }
-    public void restoreGameStateFromJson(String fileName) throws IOException {
-        try {
-            FileReader fileReader = new FileReader(fileName);
-            JsonReader jsonReader = Json.createReader(fileReader);
-
-            JsonObject jsonObject = jsonReader.readObject();
-            deserializeGameState(jsonObject);
-
-            jsonReader.close();
-            fileReader.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-    private JsonObject serializeGameState() {
-        JsonObjectBuilder jsonBuilder = Json.createObjectBuilder();
-
-        // Add properties to the JSON object as needed
-        jsonBuilder.add("direction", direction);
-        jsonBuilder.add("side", side);
-        jsonBuilder.add("currentPlayerIndex", currentPlayerIndex);
-        jsonBuilder.add("roundNumber", roundNumber);
-
-        // Serialize the current card
-        JsonObject currentCardObject = serializeCard(currentCard);
-        jsonBuilder.add("currentCard", currentCardObject);
-
-        // Serialize players
-        JsonArrayBuilder playersArrayBuilder = Json.createArrayBuilder();
-        for (UnoPlayer player : players) {
-            JsonObject playerObject = serializePlayer(player);
-            playersArrayBuilder.add(playerObject);
-        }
-        jsonBuilder.add("players", playersArrayBuilder);
-
-        return jsonBuilder.build();
-    }
-
-    private void deserializeGameState(JsonObject jsonObject) {
-        // Retrieve properties from the JSON object as needed
-        direction = jsonObject.getBoolean("direction");
-        side = jsonObject.getBoolean("side");
-        currentPlayerIndex = jsonObject.getInt("currentPlayerIndex");
-        roundNumber = jsonObject.getInt("roundNumber");
-
-        // Deserialize the current card
-        JsonObject currentCardObject = jsonObject.getJsonObject("currentCard");
-        currentCard = deserializeCard(currentCardObject);
-
-        // Deserialize players
-        JsonArray playersArray = jsonObject.getJsonArray("players");
-        players = new ArrayList<>();
-        for (JsonValue playerValue : playersArray) {
-            JsonObject playerObject = (JsonObject) playerValue;
-            UnoPlayer player = deserializePlayer(playerObject);
-            players.add(player);
-        }
-    }
-
-    private JsonObject serializeCard(Card card) {
-        JsonObjectBuilder jsonBuilder = Json.createObjectBuilder();
-        jsonBuilder.add("colour", card.getColour().name());
-        jsonBuilder.add("darkColour", card.getDarkColour().name());
-        jsonBuilder.add("number", card.getNumber().name());
-        jsonBuilder.add("cardType", card.getCardType().name());
-        jsonBuilder.add("cardDarkType", card.getCardDarkType().name());
-        return jsonBuilder.build();
-    }
-
-    /**
-     * Deserializes a Card object from a JSON object.
-     *
-     * @param jsonObject The JSON object representing the Card.
-     * @return The deserialized Card object.
-     */
-    private Card deserializeCard(JsonObject jsonObject) {
-        Card.Colour colour = Card.Colour.valueOf(jsonObject.getString("colour"));
-        Card.DarkColour darkColour = Card.DarkColour.valueOf(jsonObject.getString("darkColour"));
-        Card.Number number = Card.Number.valueOf(jsonObject.getString("number"));
-        Card.CardType cardType = Card.CardType.valueOf(jsonObject.getString("cardType"));
-        Card.DarkCardType cardDarkType = Card.DarkCardType.valueOf(jsonObject.getString("cardDarkType"));
-        return new Card(colour, darkColour, number, cardType, cardDarkType);
-    }
-
-    /**
-     * Serializes an UnoPlayer object to a JSON object.
-     *
-     * @param player The UnoPlayer object to serialize.
-     * @return The JSON object representing the UnoPlayer.
-     */
-    private JsonObject serializePlayer(UnoPlayer player) {
-        JsonObjectBuilder jsonBuilder = Json.createObjectBuilder();
-        jsonBuilder.add("playerName", player.getPlayerName());
-
-        // Add additional properties as needed...
-
-        // Example: Serialize the player's hand
-        JsonArrayBuilder handArrayBuilder = Json.createArrayBuilder();
-        for (Card card : player.getHand().getCards()) {
-            JsonObject cardObject = serializeCard(card);
-            handArrayBuilder.add(cardObject);
-        }
-        jsonBuilder.add("hand", handArrayBuilder);
-
-        return jsonBuilder.build();
-    }
-
-    /**
-     * Deserializes an UnoPlayer object from a JSON object.
-     *
-     * @param jsonObject The JSON object representing the UnoPlayer.
-     * @return The deserialized UnoPlayer object.
-     */
-    private UnoPlayer deserializePlayer(JsonObject jsonObject) {
-        String playerName = jsonObject.getString("playerName");
-        UnoPlayer player = new UnoPlayer(playerName, new Deck()); // You may need to adjust this based on your constructor
-
-        // Retrieve additional properties and update the player object...
-
-        // Example: Deserialize the player's hand
-        JsonArray handArray = jsonObject.getJsonArray("hand");
-        for (JsonValue cardValue : handArray) {
-            JsonObject cardObject = (JsonObject) cardValue;
-            Card card = deserializeCard(cardObject);
-            player.getHand().addCard(card);
-        }
-
-        return player;}
 }

@@ -1,6 +1,4 @@
 import java.util.*;
-import javax.json.*;
-import java.io.StringReader;
 
 public class Hand {
     private ArrayList<Card> cards;
@@ -95,17 +93,5 @@ public class Hand {
             }
         }
         return str.toString();
-    }
-
-    public JsonObject saveAttributesToJson() {
-        JsonArrayBuilder jsonArrayBuilder = Json.createArrayBuilder();
-
-        for (Card card : cards) {
-            jsonArrayBuilder.add(card.saveAttributesToJson());
-        }
-
-        return Json.createObjectBuilder()
-                .add("cards", jsonArrayBuilder)
-                .build();
     }
 }
