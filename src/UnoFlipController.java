@@ -36,10 +36,7 @@ public class UnoFlipController  implements ActionListener {
             gameModel.handleDrawCard(currentPlayer);
         }
         if (clickedButton == "Next Player") {
-            currentPlayer.confirmPlay();
             currentPlayer = gameModel.getNextCurrentPlayer();
-            gameView.setUndoMenuItem(false);
-            gameView.setRedoMenuItem(false);
             gameView.nextPlayerButton(false);
             gameView.drawCardButton(true);
             gameView.updateMessages("Pick a card to play or draw a card");

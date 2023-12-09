@@ -1,4 +1,8 @@
 import javax.swing.*;
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 
 public class UnoPlayerAI extends UnoPlayer {
     UnoFlipModel model;
@@ -13,14 +17,6 @@ public class UnoPlayerAI extends UnoPlayer {
     public UnoPlayerAI(String name, Deck deck, UnoFlipModel gameModel) {
         super(name, deck);
         this.model = gameModel;
-    }
-
-    @Override
-    public void playCard(Card card){
-        if (hand.contains(card)){
-            hand.removeCard(card);
-            deck.discard(card);
-        }
     }
 
     private String checkHand() {
@@ -68,9 +64,8 @@ public class UnoPlayerAI extends UnoPlayer {
     }
 
     public void handleBotDecision() {
-        System.out.println(checkHand());
+        System.out.println(getHand().getCards());
         String botDecision = askChatGPT();
-        System.out.println("ChatGPT Response: " + botDecision);
 
         JOptionPane.showMessageDialog(null, "AI wants to play: " + botDecision);
 
@@ -80,7 +75,6 @@ public class UnoPlayerAI extends UnoPlayer {
             for (Card c : getHand().getCards()) {
                 if (c.toString(model.getSide()).equals(botDecision)) {
                     JOptionPane.showMessageDialog(null, "Card in Hand: " + c.toString(model.getSide()));
-
                     if (model.getSide()) {
                         if (c.getCardType() == Card.CardType.WILD) {
                             model.handleWildCard(getBotColour(), this, c);
@@ -190,5 +184,22 @@ public class UnoPlayerAI extends UnoPlayer {
                 JOptionPane.showMessageDialog(null, "You must choose a colour.");
             }
         }
+    }
+
+    public JsonObject saveAttributesToJson() {
+        JsonArrayBuilder handArrayBuilder = Json.createArrayBuilder();
+
+        // Serialize hand
+        for (Card card : getHand().getCards()) {
+            handArrayBuilder.add(card.saveAttributesToJson());
+        }
+
+        return Json.createObjectBuilder()
+                .add("playerName", getPlayerName())
+
+                .add("unoCalled", getUnoCalled())
+                .add("remindedUno", hasRemindedUno())
+                .add("hand", handArrayBuilder)
+                .build();
     }
 }

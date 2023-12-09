@@ -1,14 +1,19 @@
 import java.util.ArrayList;
 import java.util.List;
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
+
 
 public class UnoPlayer {
     private String playerName;
-    protected Hand hand;
-    protected Deck deck;
+    private Hand hand;
+    private Deck deck;
     private int score;              // Player's score
     private boolean unoCalled;      // Indicates whether Uno has been called by the player
     private boolean remindedUno;    // Indicates whether Uno reminder has been displayed
-    private Card wantToPlay = null;
+
 
     /**
      * Constructs new player UnoPlayer.
@@ -37,20 +42,9 @@ public class UnoPlayer {
     public void playCard(Card card){
         if (hand.contains(card)){
             hand.removeCard(card);
-            wantToPlay = card;
+            deck.discard(card);
         }
-    }
 
-    public void confirmPlay(){
-        deck.discard(wantToPlay);
-    }
-
-    public void undoPlay(){
-        hand.addCard(wantToPlay);
-    }
-
-    public void redoPlay(){
-        playCard(wantToPlay);
     }
 
     /**
@@ -135,4 +129,21 @@ public class UnoPlayer {
             System.out.println(getPlayerName() + " tried to say UNO, but they have more than one card left.");
         }
     }
+    public JsonObject saveAttributesToJson() {
+        JsonArrayBuilder handArrayBuilder = Json.createArrayBuilder();
+
+        // Serialize hand
+        for (Card card : hand.getCards()) {
+            handArrayBuilder.add(card.saveAttributesToJson());
+        }
+
+        return Json.createObjectBuilder()
+                .add("playerName", playerName)
+                .add("score", score)
+                .add("unoCalled", unoCalled)
+                .add("remindedUno", remindedUno)
+                .add("hand", handArrayBuilder)
+                .build();
+    }
+
 }

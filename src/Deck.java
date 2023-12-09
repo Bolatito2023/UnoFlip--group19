@@ -1,3 +1,6 @@
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
 import java.util.*;
 
 public class Deck {
@@ -113,9 +116,7 @@ public class Deck {
      * remix operation.
      */
     public void discard(Card c) {
-        if (c != null){
-            discardedCards.add(c);
-        }
+        discardedCards.add(c);
     }
 
     /**
@@ -128,5 +129,24 @@ public class Deck {
         shuffle();
     }
 
+    public JsonObject saveAttributesToJson() {
+        JsonArrayBuilder deckArrayBuilder = Json.createArrayBuilder();
 
+        // Serialize deck
+        for (Card card : deck) {
+            deckArrayBuilder.add(card.saveAttributesToJson());
+        }
+
+        JsonArrayBuilder discardedCardsArrayBuilder = Json.createArrayBuilder();
+
+        // Serialize discardedCards
+        for (Card card : discardedCards) {
+            discardedCardsArrayBuilder.add(card.saveAttributesToJson());
+        }
+
+        return Json.createObjectBuilder()
+                .add("deck", deckArrayBuilder)
+                .add("discardedCards", discardedCardsArrayBuilder)
+                .build();
+    }
 }

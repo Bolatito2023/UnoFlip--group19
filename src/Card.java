@@ -1,3 +1,6 @@
+import netscape.javascript.JSObject;
+import javax.json.Json;
+import javax.json.JsonObject;
 /**
  * A (playing) card is a rank and a suit.
  *
@@ -44,6 +47,14 @@ public class Card {
         this.num = number;
         this.darkColour = initializeDarkColour(colour);
         this.darkCardT = DarkCardType.NUMBER;
+    }
+
+    public Card(Colour colour, DarkColour darkColour, Number number, CardType cardType, DarkCardType darkCardType) {
+        this.colour = colour;
+        this.darkColour = darkColour;
+        this.num = number;
+        this.cardT = cardType;
+        this.darkCardT = darkCardType;
     }
     private DarkColour initializeDarkColour(Colour colour) {
         switch (colour) {
@@ -275,6 +286,14 @@ public class Card {
         this.colour = colour;
     }
 
+    public JsonObject saveAttributesToJson(){
+        JsonObject jsObject = Json.createObjectBuilder()
+                .add("colour", colour.toString())
+                .add("darkCardT", darkCardT.toString())
+                .add("num", num.toString())
+                .build();
+        return jsObject;
+    }
 }
 
 

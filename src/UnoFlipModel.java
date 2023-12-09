@@ -1,5 +1,10 @@
 import javax.swing.*;
 import java.util.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import javax.json.*;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 public class UnoFlipModel {
     boolean direction = true;
 
@@ -7,14 +12,12 @@ public class UnoFlipModel {
 
     private List<UnoPlayer> players;
     private Card currentCard;
-    public Deck deck;
+    private Deck deck;
     private boolean side; //true for light side, false for dark side
     private int currentPlayerIndex;
     private int roundNumber;
     UnoFlipModelViewFrame view;
     private UnoPlayer currentPlayer;
-    private Card lastTopCard;
-    private Card lastSelectedCard;
 
     /**
      * Constructs an UnoFlip game model.
@@ -220,7 +223,6 @@ public class UnoFlipModel {
      * @param selectedCard  The Wild card to play.
      */
     public void handleWildCard(Card.Colour colour, UnoPlayer currentPlayer, Card selectedCard) {
-        playCard(currentPlayer);
         currentPlayer.playCard(selectedCard);
         currentCard = new Card(colour, Card.CardType.WILD);
         view.nextPlayerButton(true);
@@ -237,7 +239,6 @@ public class UnoFlipModel {
      * @param selectedCard  The Flip card to play.
      */
     public void handleFlipCard(UnoPlayer currentPlayer, Card selectedCard) {
-        playCard(currentPlayer);
         side = !side;
         currentPlayer.playCard(selectedCard);
         currentCard = selectedCard;
@@ -259,7 +260,6 @@ public class UnoFlipModel {
      * @param selectedCard  The Skip Everyone card to play.
      */
     public void handleSkipEveryoneCard(UnoPlayer currentPlayer, Card selectedCard) {
-        playCard(currentPlayer);
         currentPlayer.playCard(selectedCard);
         currentCard = selectedCard;
         view.updateMessages("All players are skipped.");
@@ -273,7 +273,6 @@ public class UnoFlipModel {
      * @param direction     The direction of play.
      */
     public void handleDrawFive(UnoPlayer currentPlayer, Card selectedCard, boolean direction) {
-        playCard(currentPlayer);
         currentPlayer.playCard(selectedCard);
         currentCard = selectedCard;
 
@@ -299,7 +298,6 @@ public class UnoFlipModel {
      * @param direction     The direction of play.
      */
     public void handleWildDrawColourCard(Card.Colour colour, UnoPlayer currentPlayer, Card selectedCard, boolean direction) {
-        playCard(currentPlayer);
         currentPlayer.playCard(selectedCard);
         currentCard = new Card(colour, Card.CardType.WILD_DRAW_TWO);
 
@@ -326,7 +324,6 @@ public class UnoFlipModel {
      * @param direction     The direction of play.
      */
     public void handleDrawOne(UnoPlayer currentPlayer, Card selectedCard, boolean direction) {
-        playCard(currentPlayer);
         currentPlayer.playCard(selectedCard);
         currentCard = selectedCard;
 
@@ -349,7 +346,6 @@ public class UnoFlipModel {
      * @param direction     The direction of play.
      */
     public void handleSkipCard(UnoPlayer currentPlayer, Card selectedCard, boolean direction) {
-        playCard(currentPlayer);
         if (selectedCard.getColour() == currentCard.getColour() || currentCard.getCardType() == Card.CardType.SKIP) {
             currentPlayer.playCard(selectedCard);
             currentCard = selectedCard;
@@ -373,7 +369,6 @@ public class UnoFlipModel {
      * @param direction     The direction of play.
      */
     public void handleReverseCard(UnoPlayer currentPlayer, Card selectedCard, boolean direction) {
-        playCard(currentPlayer);
         if (selectedCard.getColour() == currentCard.getColour() || currentCard.getCardType() == Card.CardType.REVERSE) {
             currentPlayer.playCard(selectedCard);
             currentCard = selectedCard;
@@ -399,7 +394,6 @@ public class UnoFlipModel {
      * @param direction     The direction of play.
      */
     public void handleWildDrawTwoCards(Card.Colour colour, UnoPlayer currentPlayer, Card selectedCard, boolean direction) {
-        playCard(currentPlayer);
         currentPlayer.playCard(selectedCard);
         currentCard = new Card(colour, Card.CardType.WILD_DRAW_TWO);
 
@@ -422,47 +416,15 @@ public class UnoFlipModel {
      * @param selectedCard  The card to play.
      */
     public void handleValidPlay(UnoPlayer currentPlayer, Card selectedCard) {
-        playCard(currentPlayer);
         view.updateDrawCardMessagePanel("Player " + currentPlayer.getPlayerName() + " plays: ", selectedCard);
         currentPlayer.playCard(selectedCard);
-
         currentCard = selectedCard;
-
         view.nextPlayerButton(true);
         view.drawCardButton(false);
 
         view.update();
         view.cardButtons(false);
-    }
 
-    private void playCard(UnoPlayer player) {
-        currentPlayer = player;
-        lastTopCard = currentCard;
-        view.setUndoMenuItem(true);
-        view.setRedoMenuItem(false);
-    }
-
-    public void handleUndo(){
-        view.updateMessages("Player " + currentPlayer.getPlayerName() + " undoes turn.");
-        lastSelectedCard = currentCard;
-        currentCard = lastTopCard;
-        currentPlayer.undoPlay();
-        view.setUndoMenuItem(false);
-        view.setRedoMenuItem(true);
-        view.update();
-    }
-
-    public void handleRedo(){
-        view.updateMessages("Player " + currentPlayer.getPlayerName() + " redoes turn.");
-        currentCard = lastSelectedCard;
-        currentPlayer.redoPlay();
-        view.setUndoMenuItem(true);
-        view.setRedoMenuItem(false);
-        view.nextPlayerButton(true);
-        view.drawCardButton(false);
-
-        view.update();
-        view.cardButtons(false);
     }
 
     /**
@@ -518,4 +480,139 @@ public class UnoFlipModel {
     public boolean getSide() {
         return side;
     }
+
+    public void saveGameStateToJson(String fileName) throws IOException {
+        try (PrintWriter writer = new PrintWriter(new FileWriter(fileName))) {
+            JsonObject jsonObject = serializeGameState();
+            writer.println(jsonObject);
+        }
+    }
+    public void restoreGameStateFromJson(String fileName) throws IOException {
+        try {
+            FileReader fileReader = new FileReader(fileName);
+            JsonReader jsonReader = Json.createReader(fileReader);
+
+            JsonObject jsonObject = jsonReader.readObject();
+            deserializeGameState(jsonObject);
+
+            jsonReader.close();
+            fileReader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    private JsonObject serializeGameState() {
+        JsonObjectBuilder jsonBuilder = Json.createObjectBuilder();
+
+        // Add properties to the JSON object as needed
+        jsonBuilder.add("direction", direction);
+        jsonBuilder.add("side", side);
+        jsonBuilder.add("currentPlayerIndex", currentPlayerIndex);
+        jsonBuilder.add("roundNumber", roundNumber);
+
+        // Serialize the current card
+        JsonObject currentCardObject = serializeCard(currentCard);
+        jsonBuilder.add("currentCard", currentCardObject);
+
+        // Serialize players
+        JsonArrayBuilder playersArrayBuilder = Json.createArrayBuilder();
+        for (UnoPlayer player : players) {
+            JsonObject playerObject = serializePlayer(player);
+            playersArrayBuilder.add(playerObject);
+        }
+        jsonBuilder.add("players", playersArrayBuilder);
+
+        return jsonBuilder.build();
+    }
+
+    private void deserializeGameState(JsonObject jsonObject) {
+        // Retrieve properties from the JSON object as needed
+        direction = jsonObject.getBoolean("direction");
+        side = jsonObject.getBoolean("side");
+        currentPlayerIndex = jsonObject.getInt("currentPlayerIndex");
+        roundNumber = jsonObject.getInt("roundNumber");
+
+        // Deserialize the current card
+        JsonObject currentCardObject = jsonObject.getJsonObject("currentCard");
+        currentCard = deserializeCard(currentCardObject);
+
+        // Deserialize players
+        JsonArray playersArray = jsonObject.getJsonArray("players");
+        players = new ArrayList<>();
+        for (JsonValue playerValue : playersArray) {
+            JsonObject playerObject = (JsonObject) playerValue;
+            UnoPlayer player = deserializePlayer(playerObject);
+            players.add(player);
+        }
+    }
+
+    private JsonObject serializeCard(Card card) {
+        JsonObjectBuilder jsonBuilder = Json.createObjectBuilder();
+        jsonBuilder.add("colour", card.getColour().name());
+        jsonBuilder.add("darkColour", card.getDarkColour().name());
+        jsonBuilder.add("number", card.getNumber().name());
+        jsonBuilder.add("cardType", card.getCardType().name());
+        jsonBuilder.add("cardDarkType", card.getCardDarkType().name());
+        return jsonBuilder.build();
+    }
+
+    /**
+     * Deserializes a Card object from a JSON object.
+     *
+     * @param jsonObject The JSON object representing the Card.
+     * @return The deserialized Card object.
+     */
+    private Card deserializeCard(JsonObject jsonObject) {
+        Card.Colour colour = Card.Colour.valueOf(jsonObject.getString("colour"));
+        Card.DarkColour darkColour = Card.DarkColour.valueOf(jsonObject.getString("darkColour"));
+        Card.Number number = Card.Number.valueOf(jsonObject.getString("number"));
+        Card.CardType cardType = Card.CardType.valueOf(jsonObject.getString("cardType"));
+        Card.DarkCardType cardDarkType = Card.DarkCardType.valueOf(jsonObject.getString("cardDarkType"));
+        return new Card(colour, darkColour, number, cardType, cardDarkType);
+    }
+
+    /**
+     * Serializes an UnoPlayer object to a JSON object.
+     *
+     * @param player The UnoPlayer object to serialize.
+     * @return The JSON object representing the UnoPlayer.
+     */
+    private JsonObject serializePlayer(UnoPlayer player) {
+        JsonObjectBuilder jsonBuilder = Json.createObjectBuilder();
+        jsonBuilder.add("playerName", player.getPlayerName());
+
+        // Add additional properties as needed...
+
+        // Example: Serialize the player's hand
+        JsonArrayBuilder handArrayBuilder = Json.createArrayBuilder();
+        for (Card card : player.getHand().getCards()) {
+            JsonObject cardObject = serializeCard(card);
+            handArrayBuilder.add(cardObject);
+        }
+        jsonBuilder.add("hand", handArrayBuilder);
+
+        return jsonBuilder.build();
+    }
+
+    /**
+     * Deserializes an UnoPlayer object from a JSON object.
+     *
+     * @param jsonObject The JSON object representing the UnoPlayer.
+     * @return The deserialized UnoPlayer object.
+     */
+    private UnoPlayer deserializePlayer(JsonObject jsonObject) {
+        String playerName = jsonObject.getString("playerName");
+        UnoPlayer player = new UnoPlayer(playerName, new Deck()); // You may need to adjust this based on your constructor
+
+        // Retrieve additional properties and update the player object...
+
+        // Example: Deserialize the player's hand
+        JsonArray handArray = jsonObject.getJsonArray("hand");
+        for (JsonValue cardValue : handArray) {
+            JsonObject cardObject = (JsonObject) cardValue;
+            Card card = deserializeCard(cardObject);
+            player.getHand().addCard(card);
+        }
+
+        return player;}
 }
