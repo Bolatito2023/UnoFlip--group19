@@ -1,5 +1,8 @@
 import javax.swing.*;
-
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 
 public class UnoPlayerAI extends UnoPlayer {
     UnoFlipModel model;
@@ -191,5 +194,21 @@ public class UnoPlayerAI extends UnoPlayer {
                 JOptionPane.showMessageDialog(null, "You must choose a colour.");
             }
         }
+    }
+    public JsonObject saveAttributesToJson() {
+        JsonArrayBuilder handArrayBuilder = Json.createArrayBuilder();
+
+        // Serialize hand
+        for (Card card : getHand().getCards()) {
+            handArrayBuilder.add(card.saveAttributesToJson());
+        }
+
+        return Json.createObjectBuilder()
+                .add("playerName", getPlayerName())
+
+                .add("unoCalled", getUnoCalled())
+                .add("remindedUno", hasRemindedUno())
+                .add("hand", handArrayBuilder)
+                .build();
     }
 }

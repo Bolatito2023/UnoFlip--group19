@@ -1,5 +1,9 @@
 import java.util.ArrayList;
 import java.util.List;
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 
 public class UnoPlayer {
     private String playerName;
@@ -135,5 +139,21 @@ public class UnoPlayer {
         } else {
             System.out.println(getPlayerName() + " tried to say UNO, but they have more than one card left.");
         }
+    }
+    public JsonObject saveAttributesToJson() {
+        JsonArrayBuilder handArrayBuilder = Json.createArrayBuilder();
+
+        // Serialize hand
+        for (Card card : hand.getCards()) {
+            handArrayBuilder.add(card.saveAttributesToJson());
+        }
+
+        return Json.createObjectBuilder()
+                .add("playerName", playerName)
+                .add("score", score)
+                .add("unoCalled", unoCalled)
+                .add("remindedUno", remindedUno)
+                .add("hand", handArrayBuilder)
+                .build();
     }
 }

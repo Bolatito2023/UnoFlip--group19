@@ -1,5 +1,15 @@
 import javax.swing.*;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import javax.json.*;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+
 public class UnoFlipModel {
     boolean direction = true;
 
@@ -481,4 +491,129 @@ public class UnoFlipModel {
     public boolean getSide() {
         return side;
     }
+    public void saveGameStateToJson(String fileName) throws IOException {
+        try (PrintWriter writer = new PrintWriter(new FileWriter(fileName))) {
+            JsonObject jsonObject = serializeGameState();
+            writer.println(jsonObject);
+        }
+    }
+    public void restoreGameStateFromJson(String fileName) throws IOException {
+        try {
+            FileReader fileReader = new FileReader(fileName);
+            JsonReader jsonReader = Json.createReader(fileReader);
+
+            JsonObject jsonObject = jsonReader.readObject();
+            deserializeGameState(jsonObject);
+
+            jsonReader.close();
+            fileReader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    private JsonObject serializeGameState() {
+        JsonObjectBuilder jsonBuilder = Json.createObjectBuilder();
+
+        jsonBuilder.add("direction", direction);
+        jsonBuilder.add("side", side);
+        jsonBuilder.add("currentPlayerIndex", currentPlayerIndex);
+        jsonBuilder.add("roundNumber", roundNumber);
+
+        JsonObject currentCardObject = serializeCard(currentCard);
+        jsonBuilder.add("currentCard", currentCardObject);
+
+        JsonArrayBuilder playersArrayBuilder = Json.createArrayBuilder();
+        for (UnoPlayer player : players) {
+            JsonObject playerObject = serializePlayer(player);
+            playersArrayBuilder.add(playerObject);
+        }
+        jsonBuilder.add("players", playersArrayBuilder);
+
+        return jsonBuilder.build();
+    }
+
+    private void deserializeGameState(JsonObject jsonObject) {
+        direction = jsonObject.getBoolean("direction");
+        side = jsonObject.getBoolean("side");
+        currentPlayerIndex = jsonObject.getInt("currentPlayerIndex");
+        roundNumber = jsonObject.getInt("roundNumber");
+
+        // Deserialize the current card
+        JsonObject currentCardObject = jsonObject.getJsonObject("currentCard");
+        currentCard = deserializeCard(currentCardObject);
+
+        // Deserialize players
+        JsonArray playersArray = jsonObject.getJsonArray("players");
+        players = new ArrayList<>();
+        for (JsonValue playerValue : playersArray) {
+            JsonObject playerObject = (JsonObject) playerValue;
+            UnoPlayer player = deserializePlayer(playerObject);
+            players.add(player);
+        }
+    }
+
+    private JsonObject serializeCard(Card card) {
+        JsonObjectBuilder jsonBuilder = Json.createObjectBuilder();
+        jsonBuilder.add("colour", card.getColour().name());
+        jsonBuilder.add("darkColour", card.getDarkColour().name());
+        jsonBuilder.add("number", card.getNumber().name());
+        jsonBuilder.add("cardType", card.getCardType().name());
+        jsonBuilder.add("cardDarkType", card.getCardDarkType().name());
+        return jsonBuilder.build();
+    }
+
+    /**
+     * Deserializes a Card object from a JSON object.
+     *
+     * @param jsonObject The JSON object representing the Card.
+     * @return The deserialized Card object.
+     */
+    private Card deserializeCard(JsonObject jsonObject) {
+        Card.Colour colour = Card.Colour.valueOf(jsonObject.getString("colour"));
+        Card.DarkColour darkColour = Card.DarkColour.valueOf(jsonObject.getString("darkColour"));
+        Card.Number number = Card.Number.valueOf(jsonObject.getString("number"));
+        Card.CardType cardType = Card.CardType.valueOf(jsonObject.getString("cardType"));
+        Card.DarkCardType cardDarkType = Card.DarkCardType.valueOf(jsonObject.getString("cardDarkType"));
+        return new Card(colour, darkColour, number, cardType, cardDarkType);
+    }
+
+    /**
+     * Serializes an UnoPlayer object to a JSON object.
+     *
+     * @param player The UnoPlayer object to serialize.
+     * @return The JSON object representing the UnoPlayer.
+     */
+    private JsonObject serializePlayer(UnoPlayer player) {
+        JsonObjectBuilder jsonBuilder = Json.createObjectBuilder();
+        jsonBuilder.add("playerName", player.getPlayerName());
+
+        JsonArrayBuilder handArrayBuilder = Json.createArrayBuilder();
+        for (Card card : player.getHand().getCards()) {
+            JsonObject cardObject = serializeCard(card);
+            handArrayBuilder.add(cardObject);
+        }
+        jsonBuilder.add("hand", handArrayBuilder);
+
+        return jsonBuilder.build();
+    }
+
+    /**
+     * Deserializes an UnoPlayer object from a JSON object.
+     *
+     * @param jsonObject The JSON object representing the UnoPlayer.
+     * @return The deserialized UnoPlayer object.
+     */
+    private UnoPlayer deserializePlayer(JsonObject jsonObject) {
+        String playerName = jsonObject.getString("playerName");
+        UnoPlayer player = new UnoPlayer(playerName, new Deck());
+
+
+        JsonArray handArray = jsonObject.getJsonArray("hand");
+        for (JsonValue cardValue : handArray) {
+            JsonObject cardObject = (JsonObject) cardValue;
+            Card card = deserializeCard(cardObject);
+            player.getHand().addCard(card);
+        }
+
+        return player;}
 }
