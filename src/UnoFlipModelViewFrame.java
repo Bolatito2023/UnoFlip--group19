@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 
 public class UnoFlipModelViewFrame extends JFrame {
     private JButton drawButton;
@@ -124,6 +125,26 @@ public class UnoFlipModelViewFrame extends JFrame {
                 resetGame();
             }
         });
+        SaveMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    saveGame();
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        });
+        LoadMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    loadGame();
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        });
     }
 
     /**
@@ -137,6 +158,14 @@ public class UnoFlipModelViewFrame extends JFrame {
             gameModel.resetTopCard();
             update();
         }
+    }
+
+    private void saveGame() throws IOException {
+        gameModel.saveGameStateToJson("unosave.txt");
+    }
+
+    private void loadGame() throws IOException {
+        gameModel.restoreGameStateFromJson("unosave.txt");
     }
 
     public void setUndoMenuItem(Boolean bool){

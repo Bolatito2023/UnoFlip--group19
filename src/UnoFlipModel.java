@@ -4,9 +4,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.*;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import javax.json.*;
-import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,6 +46,10 @@ public class UnoFlipModel {
     public void resetTopCard(){
         currentCard = deck.draw(); //Old top card put back in deck with reAdd() call in resetPlayerHands()
         currentPlayerIndex = 0;
+    }
+
+    public List<UnoPlayer> getPlayers(){
+        return players;
     }
 
     public void addView(UnoFlipModelViewFrame view) {
